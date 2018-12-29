@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package wantslist;
+
+message WantListEntry {
+  int32 want = 1;
+  int32 index = 2; 
+}
+
+message WantList {
+  string name = 1;
+  repeated WantListEntry wants = 2;
+}
+
+
+message AddWantListRequest {}
+
+message AddWantListResponse {}
+
+message GetWantListRequest {}
+
+message GetWantListResponse {}
+
+service WantService {
+  rpc AddWantList(AddWantListRequest) returns (AddWantListResponse) {};
+  rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
+}
