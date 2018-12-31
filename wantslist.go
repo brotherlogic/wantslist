@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/brotherlogic/goserver"
+	"github.com/brotherlogic/keystore/client"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -89,6 +90,8 @@ func main() {
 	server := Init()
 	server.PrepServer()
 	server.Register = server
+
+	server.GoServer.KSclient = *keystoreclient.GetClient(server.GetIP)
 
 	server.RegisterServer("wantslist", false)
 
