@@ -22,6 +22,45 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type Config struct {
+	Lists                []*WantList `protobuf:"bytes,1,rep,name=lists,proto3" json:"lists,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *Config) Reset()         { *m = Config{} }
+func (m *Config) String() string { return proto.CompactTextString(m) }
+func (*Config) ProtoMessage()    {}
+func (*Config) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c74c703880358ab0, []int{0}
+}
+
+func (m *Config) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Config.Unmarshal(m, b)
+}
+func (m *Config) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Config.Marshal(b, m, deterministic)
+}
+func (m *Config) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Config.Merge(m, src)
+}
+func (m *Config) XXX_Size() int {
+	return xxx_messageInfo_Config.Size(m)
+}
+func (m *Config) XXX_DiscardUnknown() {
+	xxx_messageInfo_Config.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Config proto.InternalMessageInfo
+
+func (m *Config) GetLists() []*WantList {
+	if m != nil {
+		return m.Lists
+	}
+	return nil
+}
+
 type WantListEntry struct {
 	Want                 int32    `protobuf:"varint,1,opt,name=want,proto3" json:"want,omitempty"`
 	Index                int32    `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty"`
@@ -34,7 +73,7 @@ func (m *WantListEntry) Reset()         { *m = WantListEntry{} }
 func (m *WantListEntry) String() string { return proto.CompactTextString(m) }
 func (*WantListEntry) ProtoMessage()    {}
 func (*WantListEntry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c74c703880358ab0, []int{0}
+	return fileDescriptor_c74c703880358ab0, []int{1}
 }
 
 func (m *WantListEntry) XXX_Unmarshal(b []byte) error {
@@ -81,7 +120,7 @@ func (m *WantList) Reset()         { *m = WantList{} }
 func (m *WantList) String() string { return proto.CompactTextString(m) }
 func (*WantList) ProtoMessage()    {}
 func (*WantList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c74c703880358ab0, []int{1}
+	return fileDescriptor_c74c703880358ab0, []int{2}
 }
 
 func (m *WantList) XXX_Unmarshal(b []byte) error {
@@ -117,16 +156,17 @@ func (m *WantList) GetWants() []*WantListEntry {
 }
 
 type AddWantListRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Add                  *WantList `protobuf:"bytes,1,opt,name=add,proto3" json:"add,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
 func (m *AddWantListRequest) Reset()         { *m = AddWantListRequest{} }
 func (m *AddWantListRequest) String() string { return proto.CompactTextString(m) }
 func (*AddWantListRequest) ProtoMessage()    {}
 func (*AddWantListRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c74c703880358ab0, []int{2}
+	return fileDescriptor_c74c703880358ab0, []int{3}
 }
 
 func (m *AddWantListRequest) XXX_Unmarshal(b []byte) error {
@@ -147,6 +187,13 @@ func (m *AddWantListRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_AddWantListRequest proto.InternalMessageInfo
 
+func (m *AddWantListRequest) GetAdd() *WantList {
+	if m != nil {
+		return m.Add
+	}
+	return nil
+}
+
 type AddWantListResponse struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -157,7 +204,7 @@ func (m *AddWantListResponse) Reset()         { *m = AddWantListResponse{} }
 func (m *AddWantListResponse) String() string { return proto.CompactTextString(m) }
 func (*AddWantListResponse) ProtoMessage()    {}
 func (*AddWantListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c74c703880358ab0, []int{3}
+	return fileDescriptor_c74c703880358ab0, []int{4}
 }
 
 func (m *AddWantListResponse) XXX_Unmarshal(b []byte) error {
@@ -188,7 +235,7 @@ func (m *GetWantListRequest) Reset()         { *m = GetWantListRequest{} }
 func (m *GetWantListRequest) String() string { return proto.CompactTextString(m) }
 func (*GetWantListRequest) ProtoMessage()    {}
 func (*GetWantListRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c74c703880358ab0, []int{4}
+	return fileDescriptor_c74c703880358ab0, []int{5}
 }
 
 func (m *GetWantListRequest) XXX_Unmarshal(b []byte) error {
@@ -219,7 +266,7 @@ func (m *GetWantListResponse) Reset()         { *m = GetWantListResponse{} }
 func (m *GetWantListResponse) String() string { return proto.CompactTextString(m) }
 func (*GetWantListResponse) ProtoMessage()    {}
 func (*GetWantListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c74c703880358ab0, []int{5}
+	return fileDescriptor_c74c703880358ab0, []int{6}
 }
 
 func (m *GetWantListResponse) XXX_Unmarshal(b []byte) error {
@@ -241,6 +288,7 @@ func (m *GetWantListResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_GetWantListResponse proto.InternalMessageInfo
 
 func init() {
+	proto.RegisterType((*Config)(nil), "wantslist.Config")
 	proto.RegisterType((*WantListEntry)(nil), "wantslist.WantListEntry")
 	proto.RegisterType((*WantList)(nil), "wantslist.WantList")
 	proto.RegisterType((*AddWantListRequest)(nil), "wantslist.AddWantListRequest")
@@ -252,22 +300,23 @@ func init() {
 func init() { proto.RegisterFile("wantslist.proto", fileDescriptor_c74c703880358ab0) }
 
 var fileDescriptor_c74c703880358ab0 = []byte{
-	// 226 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2f, 0x4f, 0xcc, 0x2b,
-	0x29, 0xce, 0xc9, 0x2c, 0x2e, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x84, 0x0b, 0x28,
-	0x59, 0x72, 0xf1, 0x86, 0x27, 0xe6, 0x95, 0xf8, 0x64, 0x16, 0x97, 0xb8, 0xe6, 0x95, 0x14, 0x55,
-	0x0a, 0x09, 0x71, 0xb1, 0x80, 0x64, 0x25, 0x18, 0x15, 0x18, 0x35, 0x58, 0x83, 0xc0, 0x6c, 0x21,
-	0x11, 0x2e, 0xd6, 0xcc, 0xbc, 0x94, 0xd4, 0x0a, 0x09, 0x26, 0xb0, 0x20, 0x84, 0xa3, 0xe4, 0xc7,
-	0xc5, 0x01, 0xd3, 0x0a, 0xd2, 0x95, 0x97, 0x98, 0x9b, 0x0a, 0xd6, 0xc5, 0x19, 0x04, 0x66, 0x0b,
-	0xe9, 0x71, 0xb1, 0x82, 0xed, 0x91, 0x60, 0x52, 0x60, 0xd6, 0xe0, 0x36, 0x92, 0xd0, 0x43, 0x38,
-	0x03, 0xc5, 0xca, 0x20, 0x88, 0x32, 0x25, 0x11, 0x2e, 0x21, 0xc7, 0x94, 0x14, 0x98, 0x54, 0x50,
-	0x6a, 0x61, 0x69, 0x6a, 0x71, 0x89, 0x92, 0x28, 0x97, 0x30, 0x8a, 0x68, 0x71, 0x41, 0x7e, 0x5e,
-	0x71, 0x2a, 0x48, 0xb1, 0x7b, 0x6a, 0x09, 0x16, 0xc5, 0x28, 0xa2, 0x10, 0xc5, 0x46, 0x6b, 0x19,
-	0xb9, 0xb8, 0x41, 0x82, 0xc1, 0xa9, 0x45, 0x65, 0x99, 0xc9, 0xa9, 0x42, 0x7e, 0x5c, 0xdc, 0x48,
-	0x66, 0x0a, 0xc9, 0x22, 0xb9, 0x0c, 0xd3, 0x05, 0x52, 0x72, 0xb8, 0xa4, 0xa1, 0x4e, 0x61, 0x00,
-	0x99, 0x87, 0x64, 0x2d, 0x8a, 0x79, 0x98, 0x8e, 0x44, 0x31, 0x0f, 0x8b, 0x6b, 0x95, 0x18, 0x92,
-	0xd8, 0xc0, 0xd1, 0x64, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0xb4, 0x96, 0x89, 0x86, 0xb9, 0x01,
-	0x00, 0x00,
+	// 255 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0x3f, 0x4b, 0x03, 0x41,
+	0x10, 0xc5, 0xbd, 0xc4, 0x0b, 0x66, 0x0e, 0x11, 0x26, 0x11, 0x16, 0x41, 0x09, 0x0b, 0x42, 0x6c,
+	0xae, 0x48, 0x2a, 0xb1, 0x12, 0x11, 0x1b, 0x49, 0x71, 0x16, 0x56, 0x16, 0xa7, 0x3b, 0xca, 0x82,
+	0xee, 0xc6, 0xdb, 0xf1, 0xdf, 0xb7, 0x97, 0x9d, 0x35, 0x31, 0xd1, 0x5c, 0x37, 0xf7, 0x9b, 0xf7,
+	0xe6, 0xbd, 0x63, 0x61, 0xef, 0xa3, 0x76, 0x1c, 0x9e, 0x6d, 0xe0, 0x72, 0xde, 0x78, 0xf6, 0xd8,
+	0x5f, 0x02, 0x3d, 0x85, 0xde, 0x85, 0x77, 0x8f, 0xf6, 0x09, 0x4f, 0x20, 0x8f, 0x24, 0xa8, 0x6c,
+	0xd4, 0x1d, 0x17, 0x93, 0x41, 0xf9, 0xeb, 0xba, 0xad, 0x1d, 0x5f, 0xdb, 0xc0, 0x55, 0x52, 0xe8,
+	0x53, 0xd8, 0x5d, 0xa0, 0x4b, 0xc7, 0xcd, 0x17, 0x22, 0x6c, 0x47, 0xb5, 0xca, 0x46, 0xd9, 0x38,
+	0xaf, 0x64, 0xc6, 0x21, 0xe4, 0xd6, 0x19, 0xfa, 0x54, 0x1d, 0x81, 0xe9, 0x43, 0xcf, 0x60, 0x67,
+	0x61, 0x8d, 0x2e, 0x57, 0xbf, 0x90, 0xb8, 0xfa, 0x95, 0xcc, 0x58, 0x42, 0x2e, 0xb9, 0xaa, 0x23,
+	0x2d, 0xd4, 0x86, 0x16, 0x12, 0x59, 0x25, 0x99, 0x3e, 0x03, 0x3c, 0x37, 0x66, 0x59, 0x90, 0x5e,
+	0xdf, 0x28, 0x30, 0x1e, 0x43, 0xb7, 0x36, 0x46, 0x0e, 0xb7, 0xfc, 0x49, 0xdc, 0xeb, 0x7d, 0x18,
+	0xac, 0x99, 0xc3, 0xdc, 0xbb, 0x40, 0x7a, 0x08, 0x78, 0x45, 0xfc, 0xe7, 0x66, 0x14, 0xaf, 0xd1,
+	0x24, 0x9e, 0xdc, 0x41, 0x11, 0xd9, 0x0d, 0x35, 0xef, 0xf6, 0x81, 0x70, 0x06, 0xc5, 0xca, 0x49,
+	0x3c, 0x5c, 0xc9, 0xfe, 0xdf, 0xf3, 0xe0, 0xa8, 0x6d, 0xfd, 0xd3, 0x64, 0xeb, 0xbe, 0x27, 0x2f,
+	0x36, 0xfd, 0x0e, 0x00, 0x00, 0xff, 0xff, 0x50, 0x4e, 0x83, 0x46, 0xc4, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -283,7 +332,6 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type WantServiceClient interface {
 	AddWantList(ctx context.Context, in *AddWantListRequest, opts ...grpc.CallOption) (*AddWantListResponse, error)
-	GetWantList(ctx context.Context, in *GetWantListRequest, opts ...grpc.CallOption) (*GetWantListResponse, error)
 }
 
 type wantServiceClient struct {
@@ -303,19 +351,9 @@ func (c *wantServiceClient) AddWantList(ctx context.Context, in *AddWantListRequ
 	return out, nil
 }
 
-func (c *wantServiceClient) GetWantList(ctx context.Context, in *GetWantListRequest, opts ...grpc.CallOption) (*GetWantListResponse, error) {
-	out := new(GetWantListResponse)
-	err := c.cc.Invoke(ctx, "/wantslist.WantService/GetWantList", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // WantServiceServer is the server API for WantService service.
 type WantServiceServer interface {
 	AddWantList(context.Context, *AddWantListRequest) (*AddWantListResponse, error)
-	GetWantList(context.Context, *GetWantListRequest) (*GetWantListResponse, error)
 }
 
 func RegisterWantServiceServer(s *grpc.Server, srv WantServiceServer) {
@@ -340,24 +378,6 @@ func _WantService_AddWantList_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WantService_GetWantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetWantListRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WantServiceServer).GetWantList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wantslist.WantService/GetWantList",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WantServiceServer).GetWantList(ctx, req.(*GetWantListRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _WantService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "wantslist.WantService",
 	HandlerType: (*WantServiceServer)(nil),
@@ -365,10 +385,6 @@ var _WantService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddWantList",
 			Handler:    _WantService_AddWantList_Handler,
-		},
-		{
-			MethodName: "GetWantList",
-			Handler:    _WantService_GetWantList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
