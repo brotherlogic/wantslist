@@ -25,9 +25,11 @@ message AddWantListResponse {}
 
 message GetWantListRequest {}
 
-message GetWantListResponse {}
+message GetWantListResponse {
+  repeated WantList lists = 1;
+}
 
 service WantService {
   rpc AddWantList(AddWantListRequest) returns (AddWantListResponse) {};
-  //rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
+  rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
 }

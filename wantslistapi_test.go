@@ -7,12 +7,17 @@ import (
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
-func TestAddWantsList(t *testing.T) {
+func TestWantsList(t *testing.T) {
 	s := InitTestServer()
 
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{Add: &pb.WantList{Name: "hello"}})
+	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 
-	if len(s.config.Lists) != 1 {
+	if err != nil {
+		t.Fatalf("Error in getting lists: %v", err)
+	}
+
+	if len(lists.Lists) != 1 {
 		t.Errorf("Wrong number of lists: %v", len(s.config.Lists))
 	}
 }
