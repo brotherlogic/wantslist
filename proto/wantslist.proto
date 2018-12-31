@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package wantslist;
 
+message Config {
+  repeated WantList lists = 1;
+}
+
 message WantListEntry {
   int32 want = 1;
   int32 index = 2; 
@@ -13,7 +17,9 @@ message WantList {
 }
 
 
-message AddWantListRequest {}
+message AddWantListRequest {
+  WantList add = 1;
+}
 
 message AddWantListResponse {}
 
@@ -23,5 +29,5 @@ message GetWantListResponse {}
 
 service WantService {
   rpc AddWantList(AddWantListRequest) returns (AddWantListResponse) {};
-  rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
+  //rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
 }
