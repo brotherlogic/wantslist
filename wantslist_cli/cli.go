@@ -83,7 +83,7 @@ func main() {
 		for i, list := range lists.Lists {
 			fmt.Printf("List %v. %v\n", (i + 1), list.Name)
 			for _, entry := range list.Wants {
-				fmt.Printf("  %v. %v (%v)\n", entry.Index, getRecordRep(ctx, entry.Want), entry.Want)
+				fmt.Printf("  %v. %v (%v) [%v]\n", entry.Index, getRecordRep(ctx, entry.Want), entry.Want, entry.Status)
 			}
 		}
 	}
