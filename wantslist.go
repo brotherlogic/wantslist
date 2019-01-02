@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strconv"
 
 	"github.com/brotherlogic/goserver"
+	"github.com/brotherlogic/goserver/utils"
 	"github.com/brotherlogic/keystore/client"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	pbg "github.com/brotherlogic/goserver/proto"
+	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
@@ -20,10 +23,34 @@ const (
 	KEY = "/github.com/brotherlogic/wantslist/config"
 )
 
+type wantBridge interface {
+	want(ctx context.Context, id int32) error
+}
+
+type prodWantBridge struct{}
+
+func (p *prodWantBridge) want(ctx context.Context, id int32) error {
+	host, port, err := utils.Resolve("recordwants")
+	if err != nil {
+		return err
+	}
+	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	defer conn.Close()
+
+	if err != nil {
+		return err
+	}
+
+	client := pbrw.NewWantServiceClient(conn)
+	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id, Superwant: true})
+	return err
+}
+
 //Server main server type
 type Server struct {
 	*goserver.GoServer
-	config *pb.Config
+	config     *pb.Config
+	wantBridge wantBridge
 }
 
 // Init builds the server
@@ -31,6 +58,7 @@ func Init() *Server {
 	s := &Server{
 		&goserver.GoServer{},
 		&pb.Config{},
+		&prodWantBridge{},
 	}
 	return s
 }
