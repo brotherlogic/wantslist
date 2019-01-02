@@ -6,6 +6,7 @@ import pb "github.com/brotherlogic/wantslist/proto"
 //AddWantList adds a want list
 func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*pb.AddWantListResponse, error) {
 	s.config.Lists = append(s.config.Lists, req.Add)
+	s.save(ctx)
 	return &pb.AddWantListResponse{}, nil
 }
 
