@@ -3,14 +3,18 @@ package main
 import (
 	"fmt"
 	"sort"
+	"time"
 
 	"golang.org/x/net/context"
 
+	pbt "github.com/brotherlogic/tracer/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
 func (s *Server) processWantLists(ctx context.Context) {
-	for _, list := range s.config.Lists {
+	ctx = s.LogTrace(ctx, "processWantLists", time.Now(), pbt.Milestone_START_FUNCTION)
+	for i, list := range s.config.Lists {
+		s.LogTrace(ctx, fmt.Sprintf("Processing List %v", i), time.Now(), pbt.Milestone_MARKER)
 		sort.SliceStable(list.Wants, func(i, j int) bool {
 			return list.Wants[i].Index < list.Wants[j].Index
 		})
@@ -25,6 +29,7 @@ func (s *Server) processWantLists(ctx context.Context) {
 				}
 			}
 		}
+		s.LogTrace(ctx, fmt.Sprintf("Identified update for list %v", i), time.Now(), pbt.Milestone_MARKER)
 
 		if toUpdateToWanted != nil {
 			err := s.wantBridge.want(ctx, toUpdateToWanted.Want)
@@ -47,4 +52,5 @@ func (s *Server) processWantLists(ctx context.Context) {
 	}
 
 	s.save(ctx)
+	s.LogTrace(ctx, "processWantLists", time.Now(), pbt.Milestone_END_FUNCTION)
 }
