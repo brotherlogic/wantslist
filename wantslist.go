@@ -14,7 +14,9 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
+	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
+	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
@@ -24,8 +26,40 @@ const (
 	KEY = "/github.com/brotherlogic/wantslist/config"
 )
 
+type rcBridge interface {
+	getRecord(ctx context.Context, id int32) (*pbrc.Record, error)
+}
+
 type wantBridge interface {
 	want(ctx context.Context, id int32) error
+}
+
+type prodRcBridge struct{}
+
+func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
+	host, port, err := utils.Resolve("recordcollection")
+	if err != nil {
+		return nil, err
+	}
+	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	defer conn.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	client := pbrc.NewRecordCollectionServiceClient(conn)
+	recs, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{Id: id}}})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(recs.GetRecords()) == 0 {
+		return nil, fmt.Errorf("No records with %v id found", id)
+	}
+
+	return recs.GetRecords()[0], nil
 }
 
 type prodWantBridge struct{}
@@ -52,6 +86,7 @@ type Server struct {
 	*goserver.GoServer
 	config     *pb.Config
 	wantBridge wantBridge
+	rcBridge   rcBridge
 }
 
 // Init builds the server
@@ -60,6 +95,7 @@ func Init() *Server {
 		&goserver.GoServer{},
 		&pb.Config{},
 		&prodWantBridge{},
+		&prodRcBridge{},
 	}
 	return s
 }

@@ -32,7 +32,17 @@ func (s *Server) processWantLists(ctx context.Context) {
 			if err == nil {
 				toUpdateToWanted.Status = pb.WantListEntry_WANTED
 			}
+		}
 
+		if toUpdateToWanted == nil {
+			for _, v := range list.Wants {
+				if v.Status == pb.WantListEntry_WANTED {
+					_, err := s.rcBridge.getRecord(ctx, v.Want)
+					if err == nil {
+						v.Status = pb.WantListEntry_IN_COLLECTION
+					}
+				}
+			}
 		}
 	}
 
