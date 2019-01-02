@@ -73,8 +73,26 @@ func (s *Server) Mote(ctx context.Context, master bool) error {
 
 // GetState gets the state of the server
 func (s *Server) GetState() []*pbg.State {
+	unprocCount := int64(0)
+	wantedCount := int64(0)
+	unknownCount := int64(0)
+	for _, list := range s.config.Lists {
+		for _, entry := range list.Wants {
+			switch entry.Status {
+			case pb.WantListEntry_UNPROCESSED:
+				unprocCount++
+			case pb.WantListEntry_WANTED:
+				wantedCount++
+			default:
+				unknownCount++
+			}
+		}
+	}
 	return []*pbg.State{
 		&pbg.State{Key: "lists", Value: int64(len(s.config.Lists))},
+		&pbg.State{Key: "unproc", Value: unprocCount},
+		&pbg.State{Key: "wanted", Value: wantedCount},
+		&pbg.State{Key: "unknown", Value: unknownCount},
 	}
 }
 

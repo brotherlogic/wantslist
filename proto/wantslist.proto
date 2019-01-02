@@ -8,7 +8,15 @@ message Config {
 
 message WantListEntry {
   int32 want = 1;
-  int32 index = 2; 
+  int32 index = 2;
+
+  enum Status {
+    UNPROCESSED = 0;
+    WANTED = 1;
+    IN_COLLECTION = 2;
+  }
+
+  Status status = 3;
 }
 
 message WantList {
