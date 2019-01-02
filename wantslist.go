@@ -105,7 +105,9 @@ func (s *Server) GetState() []*pbg.State {
 	unprocCount := int64(0)
 	wantedCount := int64(0)
 	unknownCount := int64(0)
+	total := int64(0)
 	for _, list := range s.config.Lists {
+		total += int64(len(list.Wants))
 		for _, entry := range list.Wants {
 			switch entry.Status {
 			case pb.WantListEntry_UNPROCESSED:
@@ -122,6 +124,7 @@ func (s *Server) GetState() []*pbg.State {
 		&pbg.State{Key: "unproc", Value: unprocCount},
 		&pbg.State{Key: "wanted", Value: wantedCount},
 		&pbg.State{Key: "unknown", Value: unknownCount},
+		&pbg.State{Key: "total", Value: total},
 	}
 }
 
