@@ -39,6 +39,8 @@ func (s *Server) processWantLists(ctx context.Context) {
 			}
 		}
 
+		s.LogTrace(ctx, fmt.Sprintf("Updated to wanted %v", i), time.Now(), pbt.Milestone_MARKER)
+
 		if toUpdateToWanted == nil {
 			for _, v := range list.Wants {
 				if v.Status == pb.WantListEntry_WANTED {
@@ -49,6 +51,8 @@ func (s *Server) processWantLists(ctx context.Context) {
 				}
 			}
 		}
+
+		s.LogTrace(ctx, fmt.Sprintf("Updated to in collection %v", i), time.Now(), pbt.Milestone_MARKER)
 	}
 
 	s.save(ctx)
