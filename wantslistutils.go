@@ -35,4 +35,6 @@ func (s *Server) processWantLists(ctx context.Context) {
 
 		}
 	}
+
+	s.save(ctx)
 }
