@@ -7,6 +7,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pbt "github.com/brotherlogic/tracer/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
@@ -44,9 +45,9 @@ func (s *Server) processWantLists(ctx context.Context) {
 		if toUpdateToWanted == nil {
 			for _, v := range list.Wants {
 				if v.Status == pb.WantListEntry_WANTED {
-					_, err := s.rcBridge.getRecord(ctx, v.Want)
-					if err == nil {
-						v.Status = pb.WantListEntry_IN_COLLECTION
+					r, err := s.rcBridge.getRecord(ctx, v.Want)
+					if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
+						v.Status = pb.WantListEntry_COMPLETE
 					}
 				}
 			}

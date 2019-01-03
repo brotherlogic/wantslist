@@ -13,7 +13,6 @@ message WantListEntry {
   enum Status {
     UNPROCESSED = 0;
     WANTED = 1;
-    IN_COLLECTION = 2;
     COMPLETE = 3;
   }
 

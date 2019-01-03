@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"log"
@@ -74,6 +75,34 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error adding wantlist: %v", err)
 		}
+	case "file":
+		list := &pb.WantList{Wants: []*pb.WantListEntry{}}
+
+		file, err := os.Open(os.Args[2])
+		if err != nil {
+			log.Fatalf("Error reading file: %v", err)
+		}
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		scanner.Scan()
+		list.Name = scanner.Text()
+
+		index := int32(1)
+		for scanner.Scan() {
+			iv, err := strconv.Atoi(scanner.Text())
+			if err != nil {
+				log.Fatalf("Parse error: %v", err)
+			}
+			list.Wants = append(list.Wants, &pb.WantListEntry{Index: index, Want: int32(iv)})
+			index++
+		}
+
+		_, err = client.AddWantList(ctx, &pb.AddWantListRequest{Add: list})
+		if err != nil {
+			log.Fatalf("Error adding wantlist: %v", err)
+		}
+
 	case "get":
 		lists, err := client.GetWantList(ctx, &pb.GetWantListRequest{})
 		if err != nil {
