@@ -12,10 +12,15 @@ import (
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
-type testRcBridge struct{}
+type testRcBridge struct {
+	returnComplete bool
+}
 
 func (t *testRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
-	return &pbrc.Record{Release: &pbgd.Release{Id: id}}, nil
+	if t.returnComplete {
+		return &pbrc.Record{Release: &pbgd.Release{Id: id}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}}, nil
+	}
+	return &pbrc.Record{Release: &pbgd.Release{Id: id}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED}}, nil
 }
 
 type testWantBridge struct {
@@ -102,7 +107,31 @@ func TestFirstEntryUpdatedToCollection(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error getting wants: %v", err)
 	}
-	if lists.Lists[0].Wants[0].Status != pb.WantListEntry_IN_COLLECTION {
+	if lists.Lists[0].Wants[0].Status != pb.WantListEntry_WANTED {
 		t.Errorf("Want has not been updated following first complete: %v", lists.Lists[0].Wants[0])
+	}
+}
+
+func TestFirstEntryUpdatedToComplete(t *testing.T) {
+	s := InitTestServer()
+	s.rcBridge = &testRcBridge{returnComplete: true}
+	s.AddWantList(context.Background(), &pb.AddWantListRequest{
+		Add: &pb.WantList{
+			Name: "TestList",
+			Wants: []*pb.WantListEntry{
+				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_WANTED},
+				&pb.WantListEntry{Index: 2, Want: 125},
+			},
+		},
+	})
+
+	s.processWantLists(context.Background())
+
+	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
+	if err != nil {
+		t.Fatalf("Error getting wants: %v", err)
+	}
+	if lists.Lists[0].Wants[0].Status != pb.WantListEntry_COMPLETE {
+		t.Errorf("Want has not been updated to complete: %v", lists.Lists[0].Wants[0])
 	}
 }
