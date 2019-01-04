@@ -111,7 +111,7 @@ func (s *Server) ReportHealth() bool {
 }
 
 func (s *Server) save(ctx context.Context) {
-	s.KSclient.Save(ctx, KEY, s.config)
+	go s.KSclient.Save(ctx, KEY, s.config)
 }
 
 func (s *Server) load(ctx context.Context) error {

@@ -56,6 +56,7 @@ func (s *Server) processWantLists(ctx context.Context) {
 		s.LogTrace(ctx, fmt.Sprintf("Updated to in collection %v", i), time.Now(), pbt.Milestone_MARKER)
 	}
 
+	s.LogTrace(ctx, fmt.Sprintf("Starting Save"), time.Now(), pbt.Milestone_MARKER)
 	s.save(ctx)
 	s.LogTrace(ctx, "processWantLists", time.Now(), pbt.Milestone_END_FUNCTION)
 }
