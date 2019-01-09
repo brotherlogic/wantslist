@@ -142,7 +142,14 @@ func (s *Server) GetState() []*pbg.State {
 	wantedCount := int64(0)
 	unknownCount := int64(0)
 	total := int64(0)
+	lowestProcessTime := time.Now().Unix()
+
 	for _, list := range s.config.Lists {
+
+		if list.LastProcessTime < lowestProcessTime {
+			lowestProcessTime = list.LastProcessTime
+		}
+
 		total += int64(len(list.Wants))
 		for _, entry := range list.Wants {
 			switch entry.Status {
@@ -161,6 +168,7 @@ func (s *Server) GetState() []*pbg.State {
 		&pbg.State{Key: "wanted", Value: wantedCount},
 		&pbg.State{Key: "unknown", Value: unknownCount},
 		&pbg.State{Key: "total", Value: total},
+		&pbg.State{Key: "last_processed", TimeValue: lowestProcessTime},
 	}
 }
 
