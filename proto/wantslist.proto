@@ -22,6 +22,7 @@ message WantListEntry {
 message WantList {
   string name = 1;
   repeated WantListEntry wants = 2;
+  int64 last_process_time = 3;
 }
 
 
