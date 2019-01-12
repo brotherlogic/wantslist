@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"testing"
+	"time"
 
 	"github.com/brotherlogic/keystore/client"
 	"golang.org/x/net/context"
@@ -40,6 +42,13 @@ func InitTestServer() *Server {
 	s.GoServer.KSclient = *keystoreclient.GetTestClient(".test")
 	s.wantBridge = &testWantBridge{}
 	s.rcBridge = &testRcBridge{}
+
+	d, err := time.ParseDuration("0s")
+	if err != nil {
+		log.Fatalf("Error parsing time")
+	}
+	s.listWait = d
+
 	return s
 }
 
@@ -55,7 +64,7 @@ func TestFirstEntrySet(t *testing.T) {
 		},
 	})
 
-	s.processWantLists(context.Background())
+	s.prodProcess(context.Background())
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
@@ -78,7 +87,7 @@ func TestFirstEntryUpdated(t *testing.T) {
 		},
 	})
 
-	s.processWantLists(context.Background())
+	s.prodProcess(context.Background())
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
@@ -101,7 +110,7 @@ func TestFirstEntryUpdatedToCollection(t *testing.T) {
 		},
 	})
 
-	s.processWantLists(context.Background())
+	s.prodProcess(context.Background())
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
@@ -125,7 +134,7 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 		},
 	})
 
-	s.processWantLists(context.Background())
+	s.prodProcess(context.Background())
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
