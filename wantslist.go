@@ -87,6 +87,7 @@ type Server struct {
 	config     *pb.Config
 	wantBridge wantBridge
 	rcBridge   rcBridge
+	listWait   time.Duration
 }
 
 // Init builds the server
@@ -96,7 +97,14 @@ func Init() *Server {
 		&pb.Config{},
 		&prodWantBridge{},
 		&prodRcBridge{},
+		0,
 	}
+	// 168 hours is one week
+	d, err := time.ParseDuration("168h")
+	if err != nil {
+		log.Fatalf("Error parsing duration: %v", err)
+	}
+	s.listWait = d
 	return s
 }
 
@@ -189,7 +197,7 @@ func main() {
 
 	server.RegisterServer("wantslist", false)
 
-	server.RegisterRepeatingTask(server.processWantLists, "process_want_lists", time.Minute*5)
+	server.RegisterRepeatingTask(server.prodProcess, "process_want_lists", time.Minute*5)
 
 	fmt.Printf("%v", server.Serve())
 }
