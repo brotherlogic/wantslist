@@ -16,10 +16,10 @@ func (s *Server) prodProcess(ctx context.Context) {
 }
 
 func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
-	for i, list := range s.config.Lists {
+	for _, list := range s.config.Lists {
 		if time.Now().After(time.Unix(list.LastProcessTime, 0).Add(d)) {
-			sort.SliceStable(list.Wants, func(i, j int) bool {
-				return list.Wants[i].Index < list.Wants[j].Index
+			sort.SliceStable(list.Wants, func(i2, j2 int) bool {
+				return list.Wants[i2].Index < list.Wants[j2].Index
 			})
 
 			var toUpdateToWanted *pb.WantListEntry
