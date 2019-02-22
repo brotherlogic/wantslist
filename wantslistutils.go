@@ -8,7 +8,6 @@ import (
 	"golang.org/x/net/context"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
-	pbt "github.com/brotherlogic/tracer/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
@@ -17,12 +16,10 @@ func (s *Server) prodProcess(ctx context.Context) {
 }
 
 func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
-	ctx = s.LogTrace(ctx, "processWantLists", time.Now(), pbt.Milestone_START_FUNCTION)
-	for i, list := range s.config.Lists {
+	for _, list := range s.config.Lists {
 		if time.Now().After(time.Unix(list.LastProcessTime, 0).Add(d)) {
-			s.LogTrace(ctx, fmt.Sprintf("Processing List %v", i), time.Now(), pbt.Milestone_MARKER)
-			sort.SliceStable(list.Wants, func(i, j int) bool {
-				return list.Wants[i].Index < list.Wants[j].Index
+			sort.SliceStable(list.Wants, func(i2, j2 int) bool {
+				return list.Wants[i2].Index < list.Wants[j2].Index
 			})
 
 			var toUpdateToWanted *pb.WantListEntry
@@ -35,7 +32,6 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 					}
 				}
 			}
-			s.LogTrace(ctx, fmt.Sprintf("Identified update for list %v", i), time.Now(), pbt.Milestone_MARKER)
 
 			if toUpdateToWanted != nil {
 				err := s.wantBridge.want(ctx, toUpdateToWanted.Want)
@@ -44,8 +40,6 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 					toUpdateToWanted.Status = pb.WantListEntry_WANTED
 				}
 			}
-
-			s.LogTrace(ctx, fmt.Sprintf("Updated to wanted %v", i), time.Now(), pbt.Milestone_MARKER)
 
 			if toUpdateToWanted == nil {
 				for _, v := range list.Wants {
@@ -58,13 +52,10 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 				}
 			}
 
-			s.LogTrace(ctx, fmt.Sprintf("Updated to in collection %v", i), time.Now(), pbt.Milestone_MARKER)
 			list.LastProcessTime = time.Now().Unix()
 			break
 		}
 	}
 
-	s.LogTrace(ctx, fmt.Sprintf("Starting Save"), time.Now(), pbt.Milestone_MARKER)
 	s.save(ctx)
-	s.LogTrace(ctx, "processWantLists", time.Now(), pbt.Milestone_END_FUNCTION)
 }
