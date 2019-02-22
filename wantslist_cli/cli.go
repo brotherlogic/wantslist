@@ -13,9 +13,7 @@ import (
 	"google.golang.org/grpc"
 
 	pbgd "github.com/brotherlogic/godiscogs"
-	pbgs "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
-	pbt "github.com/brotherlogic/tracer/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 
 	//Needed to pull in gzip encoding init
@@ -57,7 +55,7 @@ func main() {
 	}
 
 	client := pb.NewWantServiceClient(conn)
-	ctx, cancel := utils.BuildContext("wantslist-cli", "wantslist", pbgs.ContextType_LONG)
+	ctx, cancel := utils.BuildContext("wantslist-cli", "wantslist")
 	defer cancel()
 
 	switch os.Args[1] {
@@ -116,6 +114,4 @@ func main() {
 			}
 		}
 	}
-
-	utils.SendTrace(ctx, "End of CLI", time.Now(), pbt.Milestone_END, "recordwants-cli")
 }
