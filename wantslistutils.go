@@ -57,6 +57,8 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 			list.LastProcessTime = time.Now().Unix()
 			break
 		}
+
+		s.Log(fmt.Sprintf("Skipping (duration %v)", time.Unix(list.LastProcessTime, 0)))
 	}
 
 	s.save(ctx)
