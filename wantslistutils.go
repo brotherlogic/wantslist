@@ -47,6 +47,8 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 						r, err := s.rcBridge.getRecord(ctx, v.Want)
 						if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
 							v.Status = pb.WantListEntry_COMPLETE
+						} else if err != nil {
+							s.Log(fmt.Sprintf("Error record: %v", err))
 						}
 					}
 				}
