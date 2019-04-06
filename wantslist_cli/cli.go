@@ -108,7 +108,7 @@ func main() {
 		}
 
 		for i, list := range lists.Lists {
-			fmt.Printf("List %v. %v\n", (i + 1), list.Name)
+			fmt.Printf("List %v. %v (%v)\n", (i + 1), list.Name, time.Unix(list.LastProcessTime, 0))
 			for _, entry := range list.Wants {
 				fmt.Printf("  %v. %v (%v) [%v]\n", entry.Index, getRecordRep(ctx, entry.Want), entry.Want, entry.Status)
 			}
