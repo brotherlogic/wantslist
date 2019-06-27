@@ -100,7 +100,7 @@ func Init() *Server {
 		0,
 	}
 	// 168 hours is one week
-	d, err := time.ParseDuration("5m")
+	d, err := time.ParseDuration("1h")
 	if err != nil {
 		log.Fatalf("Error parsing duration: %v", err)
 	}
@@ -203,7 +203,7 @@ func main() {
 
 	server.RegisterServer("wantslist", false)
 
-	server.RegisterRepeatingTask(server.prodProcess, "process_want_lists", time.Minute*5)
+	server.RegisterRepeatingTask(server.prodProcess, "process_want_lists", time.Minute)
 
 	fmt.Printf("%v", server.Serve())
 }
