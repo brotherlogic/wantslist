@@ -100,7 +100,7 @@ func Init() *Server {
 		0,
 	}
 	// 168 hours is one week
-	d, err := time.ParseDuration("168h")
+	d, err := time.ParseDuration("5m")
 	if err != nil {
 		log.Fatalf("Error parsing duration: %v", err)
 	}

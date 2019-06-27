@@ -19,6 +19,7 @@ func (s *Server) prodProcess(ctx context.Context) error {
 func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 	for _, list := range s.config.Lists {
 		if time.Now().After(time.Unix(list.LastProcessTime, 0).Add(d)) {
+			s.Log(fmt.Sprintf("Processing %v", list))
 			sort.SliceStable(list.Wants, func(i2, j2 int) bool {
 				return list.Wants[i2].Index < list.Wants[j2].Index
 			})

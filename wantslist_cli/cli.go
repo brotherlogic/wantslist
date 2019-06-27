@@ -23,13 +23,13 @@ import (
 func getRecordRep(ctx context.Context, id int32) string {
 	host, port, err := utils.Resolve("recordcollection")
 	if err != nil {
-		log.Fatalf("Unable to reach collection: %v", err)
+		return fmt.Sprintf("Unable to reach collection: %v", err)
 	}
 	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
 	defer conn.Close()
 
 	if err != nil {
-		log.Fatalf("Unable to dial: %v", err)
+		return fmt.Sprintf("Unable to dial: %v", err)
 	}
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
