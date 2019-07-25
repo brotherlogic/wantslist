@@ -16,9 +16,13 @@ import (
 
 type testRcBridge struct {
 	returnComplete bool
+	fail           bool
 }
 
 func (t *testRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
+	if t.fail {
+		return nil, fmt.Errorf("Built to fail")
+	}
 	if t.returnComplete {
 		return &pbrc.Record{Release: &pbgd.Release{Id: id}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}}, nil
 	}
@@ -142,5 +146,15 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 	}
 	if lists.Lists[0].Wants[0].Status != pb.WantListEntry_COMPLETE {
 		t.Errorf("Want has not been updated to complete: %v", lists.Lists[0].Wants[0])
+	}
+}
+
+func TestUpdateWant(t *testing.T) {
+	s := InitTestServer()
+	s.rcBridge = &testRcBridge{fail: true}
+
+	err := s.updateWant(context.Background(), &pb.WantListEntry{Status: pb.WantListEntry_WANTED})
+	if err == nil {
+		t.Errorf("Bad update did not fail")
 	}
 }
