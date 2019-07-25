@@ -199,7 +199,7 @@ func main() {
 	server.PrepServer()
 	server.Register = server
 
-	server.GoServer.KSclient = *keystoreclient.GetClient(server.GetIP)
+	server.GoServer.KSclient = *keystoreclient.GetClient(server.DialMaster)
 
 	server.RegisterServer("wantslist", false)
 

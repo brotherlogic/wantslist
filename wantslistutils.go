@@ -16,6 +16,19 @@ func (s *Server) prodProcess(ctx context.Context) error {
 	return nil
 }
 
+func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
+	if v.Status == pb.WantListEntry_WANTED {
+		r, err := s.rcBridge.getRecord(ctx, v.Want)
+		if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
+			v.Status = pb.WantListEntry_COMPLETE
+		} else if err != nil {
+			s.Log(fmt.Sprintf("Error record: %v", err))
+			return err
+		}
+	}
+	return nil
+}
+
 func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 	for _, list := range s.config.Lists {
 		if time.Now().After(time.Unix(list.LastProcessTime, 0).Add(d)) {
@@ -45,14 +58,7 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 
 			if toUpdateToWanted == nil {
 				for _, v := range list.Wants {
-					if v.Status == pb.WantListEntry_WANTED {
-						r, err := s.rcBridge.getRecord(ctx, v.Want)
-						if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
-							v.Status = pb.WantListEntry_COMPLETE
-						} else if err != nil {
-							s.Log(fmt.Sprintf("Error record: %v", err))
-						}
-					}
+					s.updateWant(ctx, v)
 				}
 			}
 
