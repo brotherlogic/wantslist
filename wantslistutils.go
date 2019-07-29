@@ -23,7 +23,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
 			s.Log(fmt.Sprintf("Error record: %v", err))
-			return err
+			return s.wantBridge.want(ctx, v.Want)
 		}
 
 		return s.wantBridge.want(ctx, v.Want)

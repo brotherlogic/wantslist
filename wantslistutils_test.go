@@ -154,7 +154,7 @@ func TestUpdateWant(t *testing.T) {
 	s.rcBridge = &testRcBridge{fail: true}
 
 	err := s.updateWant(context.Background(), &pb.WantListEntry{Status: pb.WantListEntry_WANTED})
-	if err == nil {
+	if err != nil {
 		t.Errorf("Bad update did not fail")
 	}
 }
