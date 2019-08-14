@@ -25,8 +25,6 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 			s.Log(fmt.Sprintf("Error record: %v", err))
 			return s.wantBridge.want(ctx, v.Want)
 		}
-
-		return s.wantBridge.want(ctx, v.Want)
 	}
 	return nil
 }
