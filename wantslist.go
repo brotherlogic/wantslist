@@ -34,14 +34,12 @@ type wantBridge interface {
 	want(ctx context.Context, id int32) error
 }
 
-type prodRcBridge struct{}
+type prodRcBridge struct {
+	dial func(server string) (*grpc.ClientConn, error)
+}
 
 func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
-	host, port, err := utils.Resolve("recordcollection")
-	if err != nil {
-		return nil, err
-	}
-	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	conn, err := p.dial("recordcollection")
 	defer conn.Close()
 
 	if err != nil {
@@ -105,6 +103,7 @@ func Init() *Server {
 		log.Fatalf("Error parsing duration: %v", err)
 	}
 	s.listWait = d
+	s.rcBridge = &prodRcBridge{dial: s.DialMaster}
 	return s
 }
 
