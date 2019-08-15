@@ -40,11 +40,10 @@ type prodRcBridge struct {
 
 func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
 	conn, err := p.dial("recordcollection")
-	defer conn.Close()
-
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Close()
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
 	recs, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{Id: id}}})
