@@ -21,7 +21,7 @@ import (
 )
 
 func getRecordRep(ctx context.Context, id int32) string {
-	host, port, err := utils.Resolve("recordcollection")
+	host, port, err := utils.Resolve("recordcollection", "wantslist-cli")
 	if err != nil {
 		return fmt.Sprintf("Unable to reach collection: %v", err)
 	}
@@ -43,7 +43,7 @@ func getRecordRep(ctx context.Context, id int32) string {
 }
 
 func main() {
-	host, port, err := utils.Resolve("wantslist")
+	host, port, err := utils.Resolve("wantslist", "wantslist-cli")
 	if err != nil {
 		log.Fatalf("Unable to reach organiser: %v", err)
 	}

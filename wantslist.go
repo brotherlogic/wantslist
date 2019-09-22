@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/brotherlogic/goserver"
-	"github.com/brotherlogic/goserver/utils"
 	"github.com/brotherlogic/keystore/client"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -59,19 +57,16 @@ func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, e
 	return recs.GetRecords()[0], nil
 }
 
-type prodWantBridge struct{}
+type prodWantBridge struct {
+	dial func(server string) (*grpc.ClientConn, error)
+}
 
 func (p *prodWantBridge) want(ctx context.Context, id int32) error {
-	host, port, err := utils.Resolve("recordwants")
+	conn, err := p.dial("recordwants")
 	if err != nil {
 		return err
 	}
-	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
 	defer conn.Close()
-
-	if err != nil {
-		return err
-	}
 
 	client := pbrw.NewWantServiceClient(conn)
 	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id, Superwant: true})
@@ -103,6 +98,7 @@ func Init() *Server {
 	}
 	s.listWait = d
 	s.rcBridge = &prodRcBridge{dial: s.DialMaster}
+	s.wantBridge = &prodWantBridge{dial: s.DialMaster}
 	return s
 }
 
