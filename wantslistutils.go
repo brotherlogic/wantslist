@@ -67,5 +67,24 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 		}
 	}
 
+	s.cleanWantlists(ctx)
 	s.save(ctx)
+}
+
+func (s *Server) cleanWantlists(ctx context.Context) {
+	i := 0
+	for _, list := range s.config.Lists {
+		count := 0
+		for _, elem := range list.Wants {
+			if elem.Status == pb.WantListEntry_COMPLETE {
+				count++
+			}
+		}
+
+		if len(list.Wants) != count {
+			s.config.Lists[i] = list
+			i++
+		}
+	}
+	s.config.Lists = s.config.Lists[:i]
 }
