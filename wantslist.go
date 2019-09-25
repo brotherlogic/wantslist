@@ -44,7 +44,7 @@ func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, e
 	defer conn.Close()
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	recs, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{Id: id}}})
+	recs, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Caller: "wantslist-getRecord", Filter: &pbrc.Record{Release: &pbgd.Release{Id: id}}})
 
 	if err != nil {
 		return nil, err
