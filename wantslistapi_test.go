@@ -21,3 +21,16 @@ func TestWantsList(t *testing.T) {
 		t.Errorf("Wrong number of lists: %v", len(s.config.Lists))
 	}
 }
+
+func TestWantsListAddFail(t *testing.T) {
+	s := InitTestServer()
+
+	for i := 0; i < 6; i++ {
+		s.AddWantList(context.Background(), &pb.AddWantListRequest{Add: &pb.WantList{Name: "hello"}})
+	}
+
+	out, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{Add: &pb.WantList{Name: "hello"}})
+	if err == nil {
+		t.Errorf("Should have failed: %v", out)
+	}
+}

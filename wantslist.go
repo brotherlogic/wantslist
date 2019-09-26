@@ -126,6 +126,10 @@ func (s *Server) load(ctx context.Context) error {
 
 	s.config = data.(*pb.Config)
 
+	if len(s.config.Lists) > 6 {
+		s.config.Lists = s.config.Lists[:6]
+	}
+
 	if len(s.config.Lists) != 6 {
 		s.RaiseIssue(ctx, "Wantlist mismatch", fmt.Sprintf("Only 6 lists allowed, you have %v", len(s.config.Lists)), false)
 	}
