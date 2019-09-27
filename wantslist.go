@@ -126,8 +126,12 @@ func (s *Server) load(ctx context.Context) error {
 
 	s.config = data.(*pb.Config)
 
-	if len(s.config.Lists) > 6 {
-		s.config.Lists = s.config.Lists[:6]
+	for _, list := range s.config.Lists {
+		for _, want := range list.Wants {
+			if want.Status == 2 {
+				want.Status = pb.WantListEntry_COMPLETE
+			}
+		}
 	}
 
 	if len(s.config.Lists) != 6 {
