@@ -20,6 +20,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 	if v.Status == pb.WantListEntry_WANTED {
 		r, err := s.rcBridge.getRecord(ctx, v.Want)
 		if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
+			s.RaiseIssue(ctx, "Updating Want", fmt.Sprintf("Updating want %v", r.GetMetadata().Category), false)
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
 			s.Log(fmt.Sprintf("Error record: %v", err))
