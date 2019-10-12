@@ -2,45 +2,18 @@ package main
 
 import (
 	"bufio"
-	"context"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/brotherlogic/goserver/utils"
 	"google.golang.org/grpc"
 
-	pbgd "github.com/brotherlogic/godiscogs"
-	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 
 	//Needed to pull in gzip encoding init
 	_ "google.golang.org/grpc/encoding/gzip"
 )
-
-func getRecordRep(ctx context.Context, id int32) string {
-	host, port, err := utils.Resolve("recordcollection", "wantslist-cli")
-	if err != nil {
-		return fmt.Sprintf("Unable to reach collection: %v", err)
-	}
-	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
-	defer conn.Close()
-
-	if err != nil {
-		return fmt.Sprintf("Unable to dial: %v", err)
-	}
-
-	client := pbrc.NewRecordCollectionServiceClient(conn)
-	ctx, cancel := context.WithTimeout(ctx, time.Minute)
-	defer cancel()
-	rel, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{Id: id}}})
-	if err != nil || len(rel.GetRecords()) == 0 {
-		return ""
-	}
-	return fmt.Sprintf("%v", rel.GetRecords()[0].GetRelease().Title)
-}
 
 func main() {
 	host, port, err := utils.Resolve("wantslist", "wantslist-cli")
@@ -101,17 +74,5 @@ func main() {
 			log.Fatalf("Error adding wantlist: %v", err)
 		}
 
-	case "get":
-		lists, err := client.GetWantList(ctx, &pb.GetWantListRequest{})
-		if err != nil {
-			log.Fatalf("Error getting wantlists: %v", err)
-		}
-
-		for i, list := range lists.Lists {
-			fmt.Printf("List %v. %v (%v)\n", (i + 1), list.Name, time.Unix(list.LastProcessTime, 0))
-			for _, entry := range list.Wants {
-				fmt.Printf("  %v. %v (%v) [%v]\n", entry.Index, getRecordRep(ctx, entry.Want), entry.Want, entry.Status)
-			}
-		}
 	}
 }

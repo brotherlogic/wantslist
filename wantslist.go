@@ -12,7 +12,6 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
@@ -44,17 +43,20 @@ func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, e
 	defer conn.Close()
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	recs, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Caller: "wantslist-getRecord", Filter: &pbrc.Record{Release: &pbgd.Release{Id: id}}})
-
+	ids, err := client.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_ReleaseId{int32(id)}})
 	if err != nil {
 		return nil, err
 	}
 
-	if len(recs.GetRecords()) == 0 {
-		return nil, fmt.Errorf("No records with %v id found", id)
+	if len(ids.GetInstanceIds()) > 0 {
+		rec, err := client.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: ids.GetInstanceIds()[0]})
+		if err != nil {
+			return nil, err
+		}
+		return rec.GetRecord(), err
 	}
 
-	return recs.GetRecords()[0], nil
+	return nil, fmt.Errorf("Cannot locate %v", id)
 }
 
 type prodWantBridge struct {
