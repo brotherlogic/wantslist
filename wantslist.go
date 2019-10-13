@@ -140,8 +140,6 @@ func (s *Server) load(ctx context.Context) error {
 		s.RaiseIssue(ctx, "Wantlist mismatch", fmt.Sprintf("Only 6 lists allowed, you have %v", len(s.config.Lists)), false)
 	}
 
-	s.config.Lists = []*pb.WantList{}
-
 	return nil
 }
 
