@@ -173,7 +173,10 @@ func (s *Server) GetState() []*pbg.State {
 	total := int64(0)
 	lowestProcessTime := time.Now().Unix()
 
-	for _, list := range s.config.Lists {
+	str := ""
+	for i, list := range s.config.Lists {
+
+		str += fmt.Sprintf("%v -> %v,", i, len(list.Wants))
 
 		if list.LastProcessTime < lowestProcessTime {
 			lowestProcessTime = list.LastProcessTime
@@ -192,6 +195,7 @@ func (s *Server) GetState() []*pbg.State {
 		}
 	}
 	return []*pbg.State{
+		&pbg.State{Key: "strstr", Text: str},
 		&pbg.State{Key: "lists", Value: int64(len(s.config.Lists))},
 		&pbg.State{Key: "unproc", Value: unprocCount},
 		&pbg.State{Key: "wanted", Value: wantedCount},
