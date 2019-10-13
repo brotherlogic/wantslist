@@ -137,7 +137,7 @@ func (s *Server) load(ctx context.Context) error {
 	}
 
 	for i, list := range s.config.Lists {
-		if list.Name == "Bruton BRJ" {
+		if list.Name == "Bruton BRD" {
 			s.config.Lists = append(s.config.Lists[:i], s.config.Lists[i+1:]...)
 		}
 	}
