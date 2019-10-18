@@ -19,6 +19,7 @@ func (s *Server) prodProcess(ctx context.Context) error {
 func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 	if v.Status == pb.WantListEntry_WANTED {
 		r, err := s.rcBridge.getRecord(ctx, v.Want)
+		s.Log(fmt.Sprintf("GOT Record: %v, %v", r, err))
 		if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
@@ -32,7 +33,6 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 	for _, list := range s.config.Lists {
 		if time.Now().After(time.Unix(list.LastProcessTime, 0).Add(d)) {
-			s.Log(fmt.Sprintf("Processing %v", list))
 			sort.SliceStable(list.Wants, func(i2, j2 int) bool {
 				return list.Wants[i2].Index < list.Wants[j2].Index
 			})
