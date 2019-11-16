@@ -43,6 +43,7 @@ func (t *testWantBridge) want(ctx context.Context, id int32) error {
 func InitTestServer() *Server {
 	s := Init()
 	s.SkipLog = true
+	s.SkipIssue = true
 	s.GoServer.KSclient = *keystoreclient.GetTestClient(".test")
 	s.wantBridge = &testWantBridge{}
 	s.rcBridge = &testRcBridge{}
