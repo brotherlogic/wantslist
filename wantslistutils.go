@@ -88,4 +88,13 @@ func (s *Server) cleanWantlists(ctx context.Context) {
 		}
 	}
 	s.config.Lists = s.config.Lists[:i]
+
+	newwantlists := []*pb.WantList{}
+	for _, list := range s.config.Lists {
+		if int32(time.Now().Year()) == list.GetYear() {
+			newwantlists = append(newwantlists, list)
+		}
+	}
+
+	s.config.Lists = newwantlists
 }

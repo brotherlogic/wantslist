@@ -62,6 +62,7 @@ func TestFirstEntrySet(t *testing.T) {
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
 			Name: "TestList",
+			Year: int32(time.Now().Year()),
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123},
 				&pb.WantListEntry{Index: 2, Want: 125},
