@@ -4,6 +4,7 @@ package wantslist;
 
 message Config {
   repeated WantList lists = 1;
+  int64 last_change = 2;
 }
 
 message WantListEntry {
