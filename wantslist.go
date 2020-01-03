@@ -220,7 +220,10 @@ func main() {
 
 	server.GoServer.KSclient = *keystoreclient.GetClient(server.DialMaster)
 
-	server.RegisterServerV2("wantslist", false, false)
+	err := server.RegisterServerV2("wantslist", false, false)
+	if err != nil {
+		return
+	}
 
 	server.RegisterRepeatingTask(server.prodProcess, "process_want_lists", time.Minute)
 
