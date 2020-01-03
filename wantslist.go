@@ -195,6 +195,7 @@ func (s *Server) GetState() []*pbg.State {
 		}
 	}
 	return []*pbg.State{
+		&pbg.State{Key: "last_change", TimeValue: s.config.LastChange},
 		&pbg.State{Key: "strstr", Text: str},
 		&pbg.State{Key: "lists", Value: int64(len(s.config.Lists))},
 		&pbg.State{Key: "unproc", Value: unprocCount},

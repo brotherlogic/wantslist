@@ -16,6 +16,7 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 
 	req.Add.Year = int32(time.Now().Year())
 	s.config.Lists = append(s.config.Lists, req.Add)
+	s.config.LastChange = time.Now().Unix()
 	s.save(ctx)
 	return &pb.AddWantListResponse{}, nil
 }
