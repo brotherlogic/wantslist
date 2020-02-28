@@ -8,6 +8,7 @@ import (
 	"golang.org/x/net/context"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
@@ -25,7 +26,10 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
 			s.Log(fmt.Sprintf("Error record: %v", err))
-			return s.wantBridge.want(ctx, v.Want)
+			want, err := s.wantBridge.get(ctx, v.Want)
+			if err == nil && want.Level != pbrw.MasterWant_LIST {
+				return s.wantBridge.want(ctx, v.Want)
+			}
 		}
 	}
 	return nil

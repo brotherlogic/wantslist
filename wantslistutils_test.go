@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/brotherlogic/keystore/client"
+	pbrw "github.com/brotherlogic/recordwants/proto"
 	"golang.org/x/net/context"
 
 	pbgd "github.com/brotherlogic/godiscogs"
@@ -38,6 +39,10 @@ func (t *testWantBridge) want(ctx context.Context, id int32) error {
 		return fmt.Errorf("Built to fail")
 	}
 	return nil
+}
+
+func (t *testWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, error) {
+	return &pbrw.MasterWant{}, nil
 }
 
 func InitTestServer() *Server {
