@@ -13,14 +13,15 @@ import (
 
 	//Needed to pull in gzip encoding init
 	_ "google.golang.org/grpc/encoding/gzip"
+	"google.golang.org/grpc/resolver"
 )
 
+func init() {
+	resolver.Register(&utils.DiscoveryClientResolverBuilder{})
+}
+
 func main() {
-	host, port, err := utils.Resolve("wantslist", "wantslist-cli")
-	if err != nil {
-		log.Fatalf("Unable to reach organiser: %v", err)
-	}
-	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	conn, err := grpc.Dial("discovery:///wantslist", grpc.WithInsecure(), grpc.WithBalancerName("my_pick_first"))
 	defer conn.Close()
 
 	if err != nil {

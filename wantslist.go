@@ -12,6 +12,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
+	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
@@ -29,6 +30,7 @@ type rcBridge interface {
 
 type wantBridge interface {
 	want(ctx context.Context, id int32) error
+	get(ctx context.Context, id int32) (*pbrw.MasterWant, error)
 }
 
 type prodRcBridge struct {
@@ -71,8 +73,24 @@ func (p *prodWantBridge) want(ctx context.Context, id int32) error {
 	defer conn.Close()
 
 	client := pbrw.NewWantServiceClient(conn)
-	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id, Superwant: true})
+	client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
+	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_LIST})
 	return err
+}
+
+func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, error) {
+	conn, err := p.dial("recordwants")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := pbrw.NewWantServiceClient(conn)
+	want, err := client.GetWant(ctx, &pbrw.GetWantRequest{ReleaseId: id})
+	if err != nil {
+		return nil, err
+	}
+	return want.GetWant(), err
 }
 
 //Server main server type
