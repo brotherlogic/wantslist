@@ -27,7 +27,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 		} else if err != nil {
 			s.Log(fmt.Sprintf("Error record: %v", err))
 			want, err := s.wantBridge.get(ctx, v.Want)
-			if err == nil && want.Level != pbrw.MasterWant_LIST {
+			if err == nil && want.Level != pbrw.MasterWant_LIST && want.Level != pbrw.MasterWant_STAGED_TO_BE_ADDED {
 				return s.wantBridge.want(ctx, v.Want)
 			}
 		}
