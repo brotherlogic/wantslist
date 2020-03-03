@@ -169,7 +169,9 @@ func (s *Server) load(ctx context.Context) error {
 
 // Shutdown the server
 func (s *Server) Shutdown(ctx context.Context) error {
-	s.save(ctx)
+	if s.Registry.GetMaster() {
+		s.save(ctx)
+	}
 	return nil
 }
 
