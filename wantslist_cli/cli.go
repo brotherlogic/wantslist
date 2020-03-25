@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -33,6 +34,19 @@ func main() {
 	defer cancel()
 
 	switch os.Args[1] {
+	case "get":
+		lists, err := client.GetWantList(ctx, &pb.GetWantListRequest{})
+		if err != nil {
+			log.Fatalf("Error getting wantlists: %v", err)
+		}
+
+		for i, list := range lists.Lists {
+			fmt.Printf("List %v. %v\n", (i + 1), list.Name)
+			for _, entry := range list.Wants {
+				fmt.Printf("  %v. %v (%v)\n", entry.Index, entry.Status, entry.Want)
+			}
+		}
+
 	case "add":
 		list := &pb.WantList{Name: os.Args[2], Wants: []*pb.WantListEntry{}}
 		for i, v := range os.Args[3:] {
