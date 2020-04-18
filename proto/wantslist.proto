@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package wantslist;
 
+option go_package = "github.com/brotherlogic/wantslist/proto";
+
 message Config {
   repeated WantList lists = 1;
   int64 last_change = 2;
