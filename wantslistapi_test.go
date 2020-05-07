@@ -25,7 +25,7 @@ func TestWantsList(t *testing.T) {
 func TestWantsListAddFail(t *testing.T) {
 	s := InitTestServer()
 
-	for i := 0; i < 6; i++ {
+	for i := 0; i < 9; i++ {
 		s.AddWantList(context.Background(), &pb.AddWantListRequest{Add: &pb.WantList{Name: "hello"}})
 	}
 
