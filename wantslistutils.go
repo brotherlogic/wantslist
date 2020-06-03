@@ -13,8 +13,7 @@ import (
 )
 
 func (s *Server) prodProcess(ctx context.Context) error {
-	s.processWantLists(ctx, s.listWait)
-	return nil
+	return s.processWantLists(ctx, s.listWait)
 }
 
 func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
@@ -35,7 +34,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 	return nil
 }
 
-func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
+func (s *Server) processWantLists(ctx context.Context, d time.Duration) error {
 	for _, list := range s.config.Lists {
 		if time.Now().After(time.Unix(list.LastProcessTime, 0).Add(d)) {
 			sort.SliceStable(list.Wants, func(i2, j2 int) bool {
@@ -73,7 +72,7 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) {
 	}
 
 	s.cleanWantlists(ctx)
-	s.save(ctx)
+	return s.save(ctx)
 }
 
 func (s *Server) cleanWantlists(ctx context.Context) {
