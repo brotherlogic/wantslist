@@ -132,8 +132,11 @@ func (s *Server) ReportHealth() bool {
 	return true
 }
 
-func (s *Server) save(ctx context.Context) {
-	go s.KSclient.Save(ctx, KEY, s.config)
+func (s *Server) save(ctx context.Context) error {
+	if len(s.config.Lists) == 0 {
+		log.Fatalf("Something is wrong here: %v", s.config)
+	}
+	return s.KSclient.Save(ctx, KEY, s.config)
 }
 
 func (s *Server) load(ctx context.Context) error {
