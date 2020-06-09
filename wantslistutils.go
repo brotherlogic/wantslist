@@ -13,6 +13,10 @@ import (
 )
 
 func (s *Server) prodProcess(ctx context.Context) (time.Time, error) {
+	err := s.load(ctx)
+	if err == nil {
+		err = s.processWantLists(ctx, s.listWait)
+	}
 	return time.Now().Add(time.Hour), s.processWantLists(ctx, s.listWait)
 }
 
