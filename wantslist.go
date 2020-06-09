@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"runtime/debug"
 	"time"
 
 	"github.com/brotherlogic/goserver"
@@ -134,6 +135,7 @@ func (s *Server) ReportHealth() bool {
 
 func (s *Server) save(ctx context.Context) error {
 	if len(s.config.Lists) == 0 {
+		debug.PrintStack()
 		log.Fatalf("Something is wrong here: %v", s.config)
 	}
 	return s.KSclient.Save(ctx, KEY, s.config)
