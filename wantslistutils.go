@@ -12,8 +12,8 @@ import (
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
-func (s *Server) prodProcess(ctx context.Context) error {
-	return s.processWantLists(ctx, s.listWait)
+func (s *Server) prodProcess(ctx context.Context) (time.Time, error) {
+	return time.Now().Add(time.Hour), s.processWantLists(ctx, s.listWait)
 }
 
 func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
