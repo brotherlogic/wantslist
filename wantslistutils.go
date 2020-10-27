@@ -12,12 +12,12 @@ import (
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
-func (s *Server) prodProcess(ctx context.Context) (time.Time, error) {
+func (s *Server) prodProcess(ctx context.Context) error {
 	err := s.load(ctx)
 	if err == nil {
 		err = s.processWantLists(ctx, s.listWait)
 	}
-	return time.Now().Add(time.Hour), s.processWantLists(ctx, s.listWait)
+	return s.processWantLists(ctx, s.listWait)
 }
 
 func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
@@ -25,7 +25,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 		r, err := s.rcBridge.getRecord(ctx, v.Want)
 		s.Log(fmt.Sprintf("GOT Record: %v, %v", r, err))
 		if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
-			s.RaiseIssue(ctx, "Wantlist Update", fmt.Sprintf("Transition to complete because category is %v", r.GetMetadata().Category), false)
+			s.RaiseIssue("Wantlist Update", fmt.Sprintf("Transition to complete because category is %v", r.GetMetadata().Category))
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
 			s.Log(fmt.Sprintf("Error record: %v", err))

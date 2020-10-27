@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	pb "github.com/brotherlogic/wantslist/proto"
 	"golang.org/x/net/context"
+
+	rcpb "github.com/brotherlogic/recordcollection/proto"
+	pb "github.com/brotherlogic/wantslist/proto"
 )
 
 //AddWantList adds a want list
@@ -24,4 +26,9 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 //GetWantList gets a want list
 func (s *Server) GetWantList(ctx context.Context, req *pb.GetWantListRequest) (*pb.GetWantListResponse, error) {
 	return &pb.GetWantListResponse{Lists: s.config.Lists}, nil
+}
+
+//ClientUpdate on an updated record
+func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest) (*rcpb.ClientUpdateResponse, error) {
+	return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx)
 }
