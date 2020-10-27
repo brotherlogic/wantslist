@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/brotherlogic/keystore/client"
+	keystoreclient "github.com/brotherlogic/keystore/client"
 	pbrw "github.com/brotherlogic/recordwants/proto"
 	"golang.org/x/net/context"
 
@@ -75,7 +75,7 @@ func TestFirstEntrySet(t *testing.T) {
 		},
 	})
 
-	s.prodProcess(context.Background())
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {

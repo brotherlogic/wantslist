@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/brotherlogic/goserver"
-	"github.com/brotherlogic/keystore/client"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -87,11 +86,11 @@ func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, e
 	defer conn.Close()
 
 	client := pbrw.NewWantServiceClient(conn)
-	want, err := client.GetWant(ctx, &pbrw.GetWantRequest{ReleaseId: id})
+	want, err := client.GetWants(ctx, &pbrw.GetWantsRequest{ReleaseId: []int32{id}})
 	if err != nil {
 		return nil, err
 	}
-	return want.GetWant(), err
+	return want.GetWant()[0], err
 }
 
 //Server main server type
@@ -160,7 +159,7 @@ func (s *Server) load(ctx context.Context) error {
 	}
 
 	if len(s.config.Lists) != 8 {
-		s.RaiseIssue(ctx, "Wantlist mismatch", fmt.Sprintf("Only 8 lists allowed, you have %v", len(s.config.Lists)), false)
+		s.RaiseIssue("Wantlist mismatch", fmt.Sprintf("Only 8 lists allowed, you have %v", len(s.config.Lists)))
 	}
 
 	return nil
@@ -186,46 +185,7 @@ func (s *Server) Mote(ctx context.Context, master bool) error {
 
 // GetState gets the state of the server
 func (s *Server) GetState() []*pbg.State {
-	unprocCount := int64(0)
-	wantedCount := int64(0)
-	unknownCount := int64(0)
-	total := int64(0)
-	lowestProcessTime := time.Now().Unix()
-
-	str := ""
-	names := []string{}
-	for i, list := range s.config.Lists {
-
-		names = append(names, list.GetName())
-		str += fmt.Sprintf("%v -> %v,", i, len(list.Wants))
-
-		if list.LastProcessTime < lowestProcessTime {
-			lowestProcessTime = list.LastProcessTime
-		}
-
-		total += int64(len(list.Wants))
-		for _, entry := range list.Wants {
-			switch entry.Status {
-			case pb.WantListEntry_UNPROCESSED:
-				unprocCount++
-			case pb.WantListEntry_WANTED:
-				wantedCount++
-			default:
-				unknownCount++
-			}
-		}
-	}
-	return []*pbg.State{
-		&pbg.State{Key: "current_lists", Text: fmt.Sprintf("%v", names)},
-		&pbg.State{Key: "last_change", TimeValue: s.config.LastChange},
-		&pbg.State{Key: "strstr", Text: str},
-		&pbg.State{Key: "lists", Value: int64(len(s.config.Lists))},
-		&pbg.State{Key: "unproc", Value: unprocCount},
-		&pbg.State{Key: "wanted", Value: wantedCount},
-		&pbg.State{Key: "unknown", Value: unknownCount},
-		&pbg.State{Key: "total", Value: total},
-		&pbg.State{Key: "last_processed", TimeValue: lowestProcessTime},
-	}
+	return []*pbg.State{}
 }
 
 func main() {
@@ -241,14 +201,12 @@ func main() {
 	server.PrepServer()
 	server.Register = server
 
-	server.GoServer.KSclient = *keystoreclient.GetClient(server.DialMaster)
-
 	err := server.RegisterServerV2("wantslist", false, true)
 	if err != nil {
 		return
 	}
 
-	server.RegisterLockingTask(server.prodProcess, "process_want_lists")
+	//server.RegisterLockingTask(server.prodProcess, "process_want_lists")
 
 	fmt.Printf("%v", server.Serve())
 }
