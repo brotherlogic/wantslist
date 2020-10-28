@@ -13,7 +13,7 @@ import (
 
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
-	pbrc "github.com/brotherlogic/recordcollection/proto"
+	rcpb "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
@@ -24,7 +24,7 @@ const (
 )
 
 type rcBridge interface {
-	getRecord(ctx context.Context, id int32) (*pbrc.Record, error)
+	getRecord(ctx context.Context, id int32) (*rcpb.Record, error)
 }
 
 type wantBridge interface {
@@ -36,21 +36,21 @@ type prodRcBridge struct {
 	dial func(server string) (*grpc.ClientConn, error)
 }
 
-func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
+func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*rcpb.Record, error) {
 	conn, err := p.dial("recordcollection")
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Close()
 
-	client := pbrc.NewRecordCollectionServiceClient(conn)
-	ids, err := client.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_ReleaseId{int32(id)}})
+	client := rcpb.NewRecordCollectionServiceClient(conn)
+	ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_ReleaseId{int32(id)}})
 	if err != nil {
 		return nil, err
 	}
 
 	if len(ids.GetInstanceIds()) > 0 {
-		rec, err := client.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: ids.GetInstanceIds()[0]})
+		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: ids.GetInstanceIds()[0]})
 		if err != nil {
 			return nil, err
 		}
@@ -122,6 +122,7 @@ func Init() *Server {
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
 	pb.RegisterWantServiceServer(server, s)
+	rcpb.RegisterClientUpdateServiceServer(server, s)
 }
 
 // ReportHealth alerts if we're not healthy
