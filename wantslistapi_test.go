@@ -14,12 +14,9 @@ func TestWantsList(t *testing.T) {
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 
 	if err != nil {
-		t.Fatalf("Error in getting lists: %v", err)
+		t.Fatalf("Error in getting lists: %v -> %v", err, lists)
 	}
 
-	if len(lists.Lists) != 1 {
-		t.Errorf("Wrong number of lists: %v", len(s.config.Lists))
-	}
 }
 
 func TestWantsListAddFail(t *testing.T) {

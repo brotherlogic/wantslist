@@ -12,20 +12,28 @@ import (
 
 //AddWantList adds a want list
 func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*pb.AddWantListResponse, error) {
-	if len(s.config.Lists) >= 8 {
-		return nil, fmt.Errorf("You can't have more than 6 lists - you have %v", len(s.config.Lists))
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(config.Lists) >= 8 {
+		return nil, fmt.Errorf("You can't have more than 6 lists - you have %v", len(config.Lists))
 	}
 
 	req.Add.Year = int32(time.Now().Year())
-	s.config.Lists = append(s.config.Lists, req.Add)
-	s.config.LastChange = time.Now().Unix()
-	s.save(ctx)
-	return &pb.AddWantListResponse{}, nil
+	config.Lists = append(config.Lists, req.Add)
+	config.LastChange = time.Now().Unix()
+
+	return &pb.AddWantListResponse{}, s.save(ctx, config)
 }
 
 //GetWantList gets a want list
 func (s *Server) GetWantList(ctx context.Context, req *pb.GetWantListRequest) (*pb.GetWantListResponse, error) {
-	return &pb.GetWantListResponse{Lists: s.config.Lists}, nil
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetWantListResponse{Lists: config.Lists}, nil
 }
 
 //ClientUpdate on an updated record

@@ -8,30 +8,24 @@ import (
 	"strconv"
 
 	"github.com/brotherlogic/goserver/utils"
-	"google.golang.org/grpc"
 
 	pb "github.com/brotherlogic/wantslist/proto"
 
 	//Needed to pull in gzip encoding init
 	_ "google.golang.org/grpc/encoding/gzip"
-	"google.golang.org/grpc/resolver"
 )
 
-func init() {
-	resolver.Register(&utils.DiscoveryClientResolverBuilder{})
-}
-
 func main() {
-	conn, err := grpc.Dial("discovery:///wantslist", grpc.WithInsecure(), grpc.WithBalancerName("my_pick_first"))
-	defer conn.Close()
+	ctx, cancel := utils.BuildContext("wantslist-cli", "wantslist")
+	defer cancel()
 
+	conn, err := utils.LFDialServer(ctx, "wantslist")
 	if err != nil {
 		log.Fatalf("Unable to dial: %v", err)
 	}
+	defer conn.Close()
 
 	client := pb.NewWantServiceClient(conn)
-	ctx, cancel := utils.BuildContext("wantslist-cli", "wantslist")
-	defer cancel()
 
 	switch os.Args[1] {
 	case "get":
@@ -40,6 +34,7 @@ func main() {
 			log.Fatalf("Error getting wantlists: %v", err)
 		}
 
+		fmt.Printf("Found %v lists\n", len(lists.Lists))
 		for i, list := range lists.Lists {
 			fmt.Printf("List %v. %v\n", (i + 1), list.Name)
 			for _, entry := range list.Wants {
