@@ -13,11 +13,11 @@ import (
 )
 
 func (s *Server) prodProcess(ctx context.Context) error {
-	err := s.load(ctx)
+	config, err := s.load(ctx)
 	if err == nil {
-		err = s.processWantLists(ctx, s.listWait)
+		err = s.processWantLists(ctx, config, s.listWait)
 	}
-	return s.processWantLists(ctx, s.listWait)
+	return err
 }
 
 func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
@@ -38,8 +38,8 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 	return nil
 }
 
-func (s *Server) processWantLists(ctx context.Context, d time.Duration) error {
-	for _, list := range s.config.Lists {
+func (s *Server) processWantLists(ctx context.Context, config *pb.Config, d time.Duration) error {
+	for _, list := range config.Lists {
 		if time.Now().After(time.Unix(list.LastProcessTime, 0).Add(d)) {
 			sort.SliceStable(list.Wants, func(i2, j2 int) bool {
 				return list.Wants[i2].Index < list.Wants[j2].Index
@@ -75,13 +75,13 @@ func (s *Server) processWantLists(ctx context.Context, d time.Duration) error {
 		}
 	}
 
-	s.cleanWantlists(ctx)
-	return s.save(ctx)
+	config = s.cleanWantlists(ctx, config)
+	return s.save(ctx, config)
 }
 
-func (s *Server) cleanWantlists(ctx context.Context) {
+func (s *Server) cleanWantlists(ctx context.Context, config *pb.Config) *pb.Config {
 	i := 0
-	for _, list := range s.config.Lists {
+	for _, list := range config.Lists {
 		count := 0
 		for _, elem := range list.Wants {
 			if elem.Status == pb.WantListEntry_COMPLETE {
@@ -90,18 +90,19 @@ func (s *Server) cleanWantlists(ctx context.Context) {
 		}
 
 		if len(list.Wants) != count {
-			s.config.Lists[i] = list
+			config.Lists[i] = list
 			i++
 		}
 	}
-	s.config.Lists = s.config.Lists[:i]
+	config.Lists = config.Lists[:i]
 
 	newwantlists := []*pb.WantList{}
-	for _, list := range s.config.Lists {
+	for _, list := range config.Lists {
 		if int32(time.Now().Year()) == list.GetYear() {
 			newwantlists = append(newwantlists, list)
 		}
 	}
 
-	s.config.Lists = newwantlists
+	config.Lists = newwantlists
+	return config
 }

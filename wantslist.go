@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"runtime/debug"
 	"time"
 
 	"github.com/brotherlogic/goserver"
@@ -96,7 +95,6 @@ func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, e
 //Server main server type
 type Server struct {
 	*goserver.GoServer
-	config     *pb.Config
 	wantBridge wantBridge
 	rcBridge   rcBridge
 	listWait   time.Duration
@@ -106,7 +104,6 @@ type Server struct {
 func Init() *Server {
 	s := &Server{
 		&goserver.GoServer{},
-		&pb.Config{},
 		&prodWantBridge{},
 		&prodRcBridge{},
 		0,
@@ -132,54 +129,30 @@ func (s *Server) ReportHealth() bool {
 	return true
 }
 
-func (s *Server) save(ctx context.Context) error {
-	if len(s.config.Lists) == 0 {
-		debug.PrintStack()
-		log.Fatalf("Something is wrong here: %v", s.config)
-	}
-	return s.KSclient.Save(ctx, KEY, s.config)
+func (s *Server) save(ctx context.Context, config *pb.Config) error {
+	return s.KSclient.Save(ctx, KEY, config)
 }
 
-func (s *Server) load(ctx context.Context) error {
+func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 	config := &pb.Config{}
 	data, _, err := s.KSclient.Read(ctx, KEY, config)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	s.config = data.(*pb.Config)
+	config = data.(*pb.Config)
 
-	for _, list := range s.config.Lists {
-		for _, want := range list.Wants {
-			if want.Status == 2 {
-				want.Status = pb.WantListEntry_COMPLETE
-			}
-		}
-	}
-
-	if len(s.config.Lists) != 8 {
-		s.RaiseIssue("Wantlist mismatch", fmt.Sprintf("Only 8 lists allowed, you have %v", len(s.config.Lists)))
-	}
-
-	return nil
+	return config, nil
 }
 
 // Shutdown the server
 func (s *Server) Shutdown(ctx context.Context) error {
-	if s.Registry.GetMaster() {
-		s.save(ctx)
-	}
 	return nil
 }
 
 // Mote promotes/demotes this server
 func (s *Server) Mote(ctx context.Context, master bool) error {
-	if master {
-		err := s.load(ctx)
-		return err
-	}
-
 	return nil
 }
 
