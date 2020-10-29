@@ -19,6 +19,21 @@ func TestWantsList(t *testing.T) {
 
 }
 
+func TestGetWantsListFail(t *testing.T) {
+	s := InitTestServer()
+
+	s.AddWantList(context.Background(), &pb.AddWantListRequest{Add: &pb.WantList{Name: "hello"}})
+
+	s.GoServer.KSclient.Fail = true
+
+	_, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
+
+	if err == nil {
+		t.Fatalf("Should have errored")
+	}
+
+}
+
 func TestWantsListAddFail(t *testing.T) {
 	s := InitTestServer()
 

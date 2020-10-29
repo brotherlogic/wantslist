@@ -33,11 +33,11 @@ type wantBridge interface {
 }
 
 type prodRcBridge struct {
-	dial func(server string) (*grpc.ClientConn, error)
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
 func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*rcpb.Record, error) {
-	conn, err := p.dial("recordcollection")
+	conn, err := p.dial(ctx, "recordcollection")
 	if err != nil {
 		return nil, err
 	}
@@ -61,11 +61,11 @@ func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*rcpb.Record, e
 }
 
 type prodWantBridge struct {
-	dial func(server string) (*grpc.ClientConn, error)
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
 func (p *prodWantBridge) want(ctx context.Context, id int32) error {
-	conn, err := p.dial("recordwants")
+	conn, err := p.dial(ctx, "recordwants")
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func (p *prodWantBridge) want(ctx context.Context, id int32) error {
 }
 
 func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, error) {
-	conn, err := p.dial("recordwants")
+	conn, err := p.dial(ctx, "recordwants")
 	if err != nil {
 		return nil, err
 	}
@@ -114,8 +114,8 @@ func Init() *Server {
 		log.Fatalf("Error parsing duration: %v", err)
 	}
 	s.listWait = d
-	s.rcBridge = &prodRcBridge{dial: s.DialMaster}
-	s.wantBridge = &prodWantBridge{dial: s.DialMaster}
+	s.rcBridge = &prodRcBridge{dial: s.FDialServer}
+	s.wantBridge = &prodWantBridge{dial: s.FDialServer}
 	return s
 }
 
