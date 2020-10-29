@@ -50,6 +50,7 @@ func InitTestServer() *Server {
 	s.SkipLog = true
 	s.SkipIssue = true
 	s.GoServer.KSclient = *keystoreclient.GetTestClient(".test")
+	s.GoServer.KSclient.Save(context.Background(), KEY, &pb.Config{})
 	s.wantBridge = &testWantBridge{}
 	s.rcBridge = &testRcBridge{}
 
@@ -60,6 +61,25 @@ func InitTestServer() *Server {
 	s.listWait = d
 
 	return s
+}
+
+func TestAddFail(t *testing.T) {
+	s := InitTestServer()
+	s.GoServer.KSclient.Fail = true
+	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
+		Add: &pb.WantList{
+			Name: "TestList",
+			Year: int32(time.Now().Year()),
+			Wants: []*pb.WantListEntry{
+				&pb.WantListEntry{Index: 1, Want: 123},
+				&pb.WantListEntry{Index: 2, Want: 125},
+			},
+		},
+	})
+
+	if err == nil {
+		t.Errorf("Should have failed")
+	}
 }
 
 func TestFirstEntrySet(t *testing.T) {
