@@ -73,7 +73,7 @@ func (p *prodWantBridge) want(ctx context.Context, id int32) error {
 
 	client := pbrw.NewWantServiceClient(conn)
 	client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
-	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_LIST})
+	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_ANYTIME_LIST})
 	return err
 }
 
