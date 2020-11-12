@@ -180,7 +180,5 @@ func main() {
 		return
 	}
 
-	//server.RegisterLockingTask(server.prodProcess, "process_want_lists")
-
-	fmt.Printf("%v", server.Serve())
+	server.Serve()
 }
