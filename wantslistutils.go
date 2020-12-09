@@ -24,7 +24,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
 	if v.Status == pb.WantListEntry_WANTED {
 		r, err := s.rcBridge.getRecord(ctx, v.Want)
 		s.Log(fmt.Sprintf("GOT Record: %v, %v", r, err))
-		if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
+		if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED && r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_UNKNOWN {
 			s.RaiseIssue("Wantlist Update", fmt.Sprintf("Transition to complete because category is %v", r.GetMetadata().Category))
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
