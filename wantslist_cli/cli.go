@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/brotherlogic/goserver/utils"
 
@@ -43,7 +44,14 @@ func main() {
 		}
 
 	case "add":
-		list := &pb.WantList{Name: os.Args[2], Wants: []*pb.WantListEntry{}}
+		bits := strings.Split(os.Args[2], ":")
+		name := os.Args[2]
+		speed := pb.WantList_STANDARD
+		if len(bits) > 1 {
+			name = bits[1]
+			speed = pb.WantList_RAPID
+		}
+		list := &pb.WantList{Name: name, Type: speed, Wants: []*pb.WantListEntry{}}
 		for i, v := range os.Args[3:] {
 			val, err := strconv.Atoi(v)
 			if err != nil {
@@ -67,7 +75,16 @@ func main() {
 
 		scanner := bufio.NewScanner(file)
 		scanner.Scan()
-		list.Name = scanner.Text()
+		bits := strings.Split(scanner.Text(), ":")
+		name := scanner.Text()
+		speed := pb.WantList_STANDARD
+		if len(bits) > 1 {
+			name = bits[1]
+			speed = pb.WantList_RAPID
+		}
+
+		list.Name = name
+		list.Type = speed
 
 		index := int32(1)
 		for scanner.Scan() {
@@ -79,10 +96,10 @@ func main() {
 			index++
 		}
 
-		_, err = client.AddWantList(ctx, &pb.AddWantListRequest{Add: list})
+		resp, err := client.AddWantList(ctx, &pb.AddWantListRequest{Add: list})
 		if err != nil {
 			log.Fatalf("Error adding wantlist: %v", err)
 		}
-
+		log.Printf("ADDED: %v", resp)
 	}
 }

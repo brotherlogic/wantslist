@@ -16,7 +16,7 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	if len(config.Lists) >= 8 {
+	if len(config.Lists) >= 10 {
 		return nil, fmt.Errorf("You can't have more than 6 lists - you have %v", len(config.Lists))
 	}
 

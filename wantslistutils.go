@@ -20,11 +20,12 @@ func (s *Server) prodProcess(ctx context.Context) error {
 	return err
 }
 
-func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry) error {
+func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.WantList) error {
 	if v.Status == pb.WantListEntry_WANTED {
 		r, err := s.rcBridge.getRecord(ctx, v.Want)
 		s.Log(fmt.Sprintf("GOT Record: %v, %v", r, err))
-		if err == nil && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED && r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_UNKNOWN {
+		if err == nil && ((list.GetType() == pb.WantList_STANDARD && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED && r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED && r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_UNKNOWN) ||
+			(list.GetType() == pb.WantList_STANDARD && r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED)) {
 			s.RaiseIssue("Wantlist Update", fmt.Sprintf("Transition to complete because category is %v", r.GetMetadata().Category))
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
@@ -66,7 +67,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, d time
 
 			if toUpdateToWanted == nil {
 				for _, v := range list.Wants {
-					s.updateWant(ctx, v)
+					s.updateWant(ctx, v, list)
 				}
 			}
 

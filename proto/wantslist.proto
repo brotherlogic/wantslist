@@ -27,6 +27,12 @@ message WantList {
   repeated WantListEntry wants = 2;
   int64 last_process_time = 3;
   int32 year = 4;
+
+  enum WantlistType {
+    STANDARD = 0;
+    RAPID = 1;
+  }
+  WantlistType type = 5;
 }
 
 
