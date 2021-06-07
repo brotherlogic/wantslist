@@ -144,6 +144,14 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 
 	config = data.(*pb.Config)
 
+	var lists []*pb.WantList
+	for _, list := range config.GetLists() {
+		if time.Now().Sub(time.Unix(list.GetTimeAdded(), 0)) < time.Hour*24*30*3 {
+			lists = append(lists, list)
+		}
+	}
+	config.Lists = lists
+
 	return config, nil
 }
 
