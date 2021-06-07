@@ -16,11 +16,17 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	if len(config.Lists) >= 5 {
-		return nil, fmt.Errorf("You can't have more than 5 lists - you have %v", len(config.Lists))
+
+	if len(config.Lists) != 5 {
+		s.RaiseIssue("Moar Wants", "You need to add some wants lists")
+	}
+
+	if len(config.Lists) > 5 {
+		return nil, fmt.Errorf("You need to have 5 lists - you have %v", len(config.Lists))
 	}
 
 	req.Add.Year = int32(time.Now().Year())
+	req.Add.TimeAdded = time.Now().Unix()
 	config.Lists = append(config.Lists, req.Add)
 	config.LastChange = time.Now().Unix()
 

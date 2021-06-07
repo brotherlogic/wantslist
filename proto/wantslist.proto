@@ -33,6 +33,7 @@ message WantList {
     RAPID = 1;
   }
   WantlistType type = 5;
+  int64 time_added = 6;
 }
 
 
