@@ -46,3 +46,32 @@ func TestWantsListAddFail(t *testing.T) {
 		t.Errorf("Should have failed: %v", out)
 	}
 }
+
+func TestDeleteWantsListFail(t *testing.T) {
+	s := InitTestServer()
+
+	s.GoServer.KSclient.Fail = true
+
+	_, err := s.DeleteWantList(context.Background(), &pb.DeleteWantlistRequest{})
+
+	if err == nil {
+		t.Fatalf("Should have errored")
+	}
+}
+
+func TestDeleteWantsList(t *testing.T) {
+	s := InitTestServer()
+
+	s.AddWantList(context.Background(), &pb.AddWantListRequest{Add: &pb.WantList{Name: "hello"}})
+	s.DeleteWantList(context.Background(), &pb.DeleteWantlistRequest{Name: "hello"})
+	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
+
+	if err != nil {
+		t.Fatalf("Error in getting lists: %v -> %v", err, lists)
+	}
+
+	if len(lists.GetLists()) != 0 {
+		t.Errorf("List was not removed")
+	}
+
+}
