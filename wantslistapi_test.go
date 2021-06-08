@@ -63,6 +63,7 @@ func TestDeleteWantsList(t *testing.T) {
 	s := InitTestServer()
 
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{Add: &pb.WantList{Name: "hello"}})
+	s.AddWantList(context.Background(), &pb.AddWantListRequest{Add: &pb.WantList{Name: "goodbye"}})
 	s.DeleteWantList(context.Background(), &pb.DeleteWantlistRequest{Name: "hello"})
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 
@@ -70,7 +71,7 @@ func TestDeleteWantsList(t *testing.T) {
 		t.Fatalf("Error in getting lists: %v -> %v", err, lists)
 	}
 
-	if len(lists.GetLists()) != 0 {
+	if len(lists.GetLists()) != 1 {
 		t.Errorf("List was not removed")
 	}
 
