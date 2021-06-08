@@ -30,7 +30,6 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 			r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_UNKNOWN) ||
 			(list.GetType() == pb.WantList_RAPID &&
 				r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED)) {
-			s.RaiseIssue("Wantlist Update", fmt.Sprintf("Transition to complete because category is %v", r.GetMetadata().Category))
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
 			s.Log(fmt.Sprintf("Error record: %v", err))
