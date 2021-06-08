@@ -152,6 +152,10 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 	}
 	config.Lists = lists
 
+	if len(config.Lists) != 5 {
+		s.RaiseIssue("Wrong wants", fmt.Sprintf("You need to add/remove some wants lists: %v is how many you have", len(config.Lists)))
+	}
+
 	return config, nil
 }
 
