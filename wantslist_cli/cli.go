@@ -42,7 +42,11 @@ func main() {
 				fmt.Printf("  %v. %v (%v)\n", entry.Index, entry.Status, entry.Want)
 			}
 		}
-
+	case "delete":
+		_, err := client.DeleteWantList(ctx, &pb.DeleteWantlistRequest{Name: os.Args[2]})
+		if err != nil {
+			log.Fatalf("Error getting wantlists: %v", err)
+		}
 	case "add":
 		bits := strings.Split(os.Args[2], ":")
 		name := os.Args[2]
