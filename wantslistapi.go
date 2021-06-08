@@ -18,7 +18,7 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 	}
 
 	if len(config.Lists) != 5 {
-		s.RaiseIssue("Moar Wants", "You need to add some wants lists")
+		s.RaiseIssue("Moar Wants", fmt.Sprintf("You need to add some wants lists: %v is how many you have", len(config.Lists)))
 	}
 
 	if len(config.Lists) > 5 {
