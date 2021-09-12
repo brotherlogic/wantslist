@@ -16,6 +16,7 @@ message WantListEntry {
   enum Status {
     UNPROCESSED = 0;
     WANTED = 1;
+    LIMBO = 2;
     COMPLETE = 3;
   }
 
@@ -31,9 +32,11 @@ message WantList {
   enum WantlistType {
     STANDARD = 0;
     RAPID = 1;
+    ALL_IN = 2;
   }
   WantlistType type = 5;
   int64 time_added = 6;
+  int64 retire_time = 7;
 }
 
 

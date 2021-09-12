@@ -28,7 +28,8 @@ type rcBridge interface {
 }
 
 type wantBridge interface {
-	want(ctx context.Context, id int32) error
+	want(ctx context.Context, id int32, retire int64) error
+	unwant(ctx context.Context, id int32) error
 	get(ctx context.Context, id int32) (*pbrw.MasterWant, error)
 }
 
@@ -64,7 +65,7 @@ type prodWantBridge struct {
 	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
-func (p *prodWantBridge) want(ctx context.Context, id int32) error {
+func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64) error {
 	conn, err := p.dial(ctx, "recordwants")
 	if err != nil {
 		return err
@@ -73,7 +74,20 @@ func (p *prodWantBridge) want(ctx context.Context, id int32) error {
 
 	client := pbrw.NewWantServiceClient(conn)
 	client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
-	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_ANYTIME_LIST})
+	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_ANYTIME_LIST, RetireTime: retire})
+	return err
+}
+
+func (p *prodWantBridge) unwant(ctx context.Context, id int32) error {
+	conn, err := p.dial(ctx, "recordwants")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	client := pbrw.NewWantServiceClient(conn)
+	client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
+	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_NEVER})
 	return err
 }
 

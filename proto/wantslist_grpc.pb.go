@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // WantServiceClient is the client API for WantService service.
@@ -88,7 +89,7 @@ type UnsafeWantServiceServer interface {
 }
 
 func RegisterWantServiceServer(s grpc.ServiceRegistrar, srv WantServiceServer) {
-	s.RegisterService(&_WantService_serviceDesc, srv)
+	s.RegisterService(&WantService_ServiceDesc, srv)
 }
 
 func _WantService_AddWantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -145,7 +146,10 @@ func _WantService_DeleteWantList_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-var _WantService_serviceDesc = grpc.ServiceDesc{
+// WantService_ServiceDesc is the grpc.ServiceDesc for WantService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var WantService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "wantslist.WantService",
 	HandlerType: (*WantServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
