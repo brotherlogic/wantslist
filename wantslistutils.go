@@ -34,7 +34,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 		} else if err != nil {
 			want, err := s.wantBridge.get(ctx, v.Want)
 			s.Log(fmt.Sprintf("Got want: %v, %v", want, err))
-			if err != nil || (want.Level != pbrw.MasterWant_ANYTIME_LIST && want.Level != pbrw.MasterWant_STAGED_TO_BE_ADDED) {
+			if err != nil || want.Level != pbrw.MasterWant_ANYTIME_LIST || want.GetRetireTime() != list.GetRetireTime() {
 				return s.wantBridge.want(ctx, v.Want, list.GetRetireTime())
 			}
 		}
