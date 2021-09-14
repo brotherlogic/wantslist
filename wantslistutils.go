@@ -92,14 +92,16 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, d time
 				for _, w := range list.GetWants() {
 					if w.Status == pb.WantListEntry_UNPROCESSED {
 						w.Status = pb.WantListEntry_WANTED
-						s.updateWant(ctx, w, list)
+						err := s.updateWant(ctx, w, list)
+						return err
 					}
 				}
 			} else {
 				for _, w := range list.GetWants() {
 					if w.Status == pb.WantListEntry_WANTED {
 						w.Status = pb.WantListEntry_UNPROCESSED
-						s.updateWant(ctx, w, list)
+						err := s.updateWant(ctx, w, list)
+						return err
 					}
 				}
 			}
