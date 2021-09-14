@@ -10,6 +10,8 @@ import (
 	"github.com/brotherlogic/goserver"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
@@ -74,7 +76,7 @@ func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64) error
 
 	client := pbrw.NewWantServiceClient(conn)
 	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
-	if err != nil {
+	if err != nil && status.Convert(err).Code() != codes.FailedPrecondition {
 		return err
 	}
 	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_ANYTIME_LIST, RetireTime: retire})
@@ -90,7 +92,7 @@ func (p *prodWantBridge) unwant(ctx context.Context, id int32) error {
 
 	client := pbrw.NewWantServiceClient(conn)
 	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
-	if err != nil {
+	if err != nil && status.Convert(err).Code() != codes.FailedPrecondition {
 		return err
 	}
 	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_NEVER})
