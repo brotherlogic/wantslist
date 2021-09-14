@@ -73,7 +73,10 @@ func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64) error
 	defer conn.Close()
 
 	client := pbrw.NewWantServiceClient(conn)
-	client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
+	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
+	if err != nil {
+		return err
+	}
 	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_ANYTIME_LIST, RetireTime: retire})
 	return err
 }
@@ -86,7 +89,10 @@ func (p *prodWantBridge) unwant(ctx context.Context, id int32) error {
 	defer conn.Close()
 
 	client := pbrw.NewWantServiceClient(conn)
-	client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
+	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
+	if err != nil {
+		return err
+	}
 	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_NEVER})
 	return err
 }

@@ -32,8 +32,8 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 				r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED)) {
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
-			s.Log(fmt.Sprintf("Error record: %v", err))
 			want, err := s.wantBridge.get(ctx, v.Want)
+			s.Log(fmt.Sprintf("Got want: %v, %v", want, err))
 			if err == nil && want.Level != pbrw.MasterWant_ANYTIME_LIST && want.Level != pbrw.MasterWant_STAGED_TO_BE_ADDED {
 				return s.wantBridge.want(ctx, v.Want, list.GetRetireTime())
 			}
