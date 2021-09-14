@@ -7,13 +7,11 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/brotherlogic/goserver/utils"
 
 	pb "github.com/brotherlogic/wantslist/proto"
-
-	//Needed to pull in gzip encoding init
-	_ "google.golang.org/grpc/encoding/gzip"
 )
 
 func main() {
@@ -83,12 +81,18 @@ func main() {
 		name := scanner.Text()
 		speed := pb.WantList_STANDARD
 		if len(bits) > 1 {
-			name = bits[1]
-			speed = pb.WantList_RAPID
+			if bits[1] != "ALL" {
+				name = bits[0]
+				speed = pb.WantList_RAPID
+			} else {
+				name = bits[0]
+				speed = pb.WantList_ALL_IN
+			}
 		}
 
 		list.Name = name
 		list.Type = speed
+		list.RetireTime = time.Now().Add(time.Hour * 24 * 30 * 6).Unix()
 
 		index := int32(1)
 		for scanner.Scan() {
