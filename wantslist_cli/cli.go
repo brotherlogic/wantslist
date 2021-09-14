@@ -11,6 +11,7 @@ import (
 
 	"github.com/brotherlogic/goserver/utils"
 
+	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
@@ -27,6 +28,18 @@ func main() {
 	client := pb.NewWantServiceClient(conn)
 
 	switch os.Args[1] {
+	case "ping":
+		num, err := strconv.ParseInt(os.Args[2], 10, 32)
+		if err != nil {
+			log.Fatalf("Bad num: %v", err)
+		}
+
+		client2 := pbrc.NewClientUpdateServiceClient(conn)
+		_, err = client2.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(num)})
+		if err != nil {
+			log.Fatalf("Bad call: %v", err)
+		}
+
 	case "get":
 		lists, err := client.GetWantList(ctx, &pb.GetWantListRequest{})
 		if err != nil {

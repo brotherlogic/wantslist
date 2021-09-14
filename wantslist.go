@@ -103,6 +103,11 @@ func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, e
 	if err != nil {
 		return nil, err
 	}
+
+	if len(want.GetWant()) == 0 {
+		return nil, fmt.Errorf("Cannot find wants for %v", id)
+	}
+
 	return want.GetWant()[0], err
 }
 
