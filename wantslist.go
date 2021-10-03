@@ -173,14 +173,14 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 
 	var lists []*pb.WantList
 	for _, list := range config.GetLists() {
-		if time.Now().Sub(time.Unix(list.GetTimeAdded(), 0)) < time.Hour*24*30*3 {
+		if time.Since(time.Unix(list.GetTimeAdded(), 0)) < time.Hour*24*30*3 {
 			lists = append(lists, list)
 		}
 	}
 	config.Lists = lists
 
-	if len(config.Lists) != 3 {
-		s.RaiseIssue("Wrong wants", fmt.Sprintf("You need to add/remove some wants lists: %v is how many you have", len(config.Lists)))
+	if len(config.Lists) != 6 {
+		s.RaiseIssue("Wrong wants", fmt.Sprintf("You need to add/remove some wants lists to make 6: %v is how many you have", len(config.Lists)))
 	}
 
 	return config, nil
