@@ -91,21 +91,24 @@ func main() {
 		scanner := bufio.NewScanner(file)
 		scanner.Scan()
 		bits := strings.Split(scanner.Text(), ":")
-		name := scanner.Text()
-		speed := pb.WantList_STANDARD
-		if len(bits) > 1 {
-			if bits[1] != "ALL" {
-				name = bits[0]
-				speed = pb.WantList_RAPID
-			} else {
-				name = bits[0]
-				speed = pb.WantList_ALL_IN
-			}
+		name := bits[0]
+
+		switch bits[1] {
+		case "STANDARD":
+			list.Type = pb.WantList_STANDARD
+		default:
+			log.Fatalf("%v is an unknown speed")
 		}
 
+		switch bits[2] {
+		case "year":
+			list.RetireTime = time.Date(time.Now().Year()+1, time.Month(1), 1, 0, 0, 0, 0, time.Local).Unix()
+		default:
+			log.Fatalf("%v is an unknown runtime", bits[2])
+		}
+
+		list.Budget = bits[3]
 		list.Name = name
-		list.Type = speed
-		list.RetireTime = time.Now().Add(time.Hour * 24 * 30 * 6).Unix()
 
 		index := int32(1)
 		for scanner.Scan() {
