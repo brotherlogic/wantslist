@@ -124,7 +124,6 @@ type Server struct {
 	*goserver.GoServer
 	wantBridge wantBridge
 	rcBridge   rcBridge
-	listWait   time.Duration
 }
 
 // Init builds the server
@@ -133,14 +132,7 @@ func Init() *Server {
 		&goserver.GoServer{},
 		&prodWantBridge{},
 		&prodRcBridge{},
-		0,
 	}
-	// 168 hours is one week
-	d, err := time.ParseDuration("1m")
-	if err != nil {
-		log.Fatalf("Error parsing duration: %v", err)
-	}
-	s.listWait = d
 	s.rcBridge = &prodRcBridge{dial: s.FDialServer}
 	s.wantBridge = &prodWantBridge{dial: s.FDialServer}
 	return s

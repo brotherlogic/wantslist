@@ -15,7 +15,7 @@ import (
 func (s *Server) prodProcess(ctx context.Context) error {
 	config, err := s.load(ctx)
 	if err == nil {
-		err = s.processWantLists(ctx, config, s.listWait)
+		err = s.processWantLists(ctx, config)
 	}
 	return err
 }
@@ -44,43 +44,41 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 	return nil
 }
 
-func (s *Server) processWantLists(ctx context.Context, config *pb.Config, d time.Duration) error {
+func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error {
 	for _, list := range config.Lists {
 		if list.GetType() != pb.WantList_ALL_IN {
-			if time.Now().After(time.Unix(list.LastProcessTime, 0).Add(d)) {
-				sort.SliceStable(list.Wants, func(i2, j2 int) bool {
-					return list.Wants[i2].Index < list.Wants[j2].Index
-				})
+			sort.SliceStable(list.Wants, func(i2, j2 int) bool {
+				return list.Wants[i2].Index < list.Wants[j2].Index
+			})
 
-				var toUpdateToWanted *pb.WantListEntry
-				if list.Wants[0].Status == pb.WantListEntry_UNPROCESSED {
-					toUpdateToWanted = list.Wants[0]
-				} else {
-					for i := range list.Wants[1:] {
-						if list.Wants[i].Status == pb.WantListEntry_COMPLETE && list.Wants[i+1].Status == pb.WantListEntry_UNPROCESSED {
-							toUpdateToWanted = list.Wants[i+1]
-						}
+			var toUpdateToWanted *pb.WantListEntry
+			if list.Wants[0].Status == pb.WantListEntry_UNPROCESSED {
+				toUpdateToWanted = list.Wants[0]
+			} else {
+				for i := range list.Wants[1:] {
+					if list.Wants[i].Status == pb.WantListEntry_COMPLETE && list.Wants[i+1].Status == pb.WantListEntry_UNPROCESSED {
+						toUpdateToWanted = list.Wants[i+1]
 					}
 				}
-
-				if toUpdateToWanted != nil {
-					err := s.wantBridge.want(ctx, toUpdateToWanted.Want, list.GetRetireTime(), list.GetBudget())
-					s.Log(fmt.Sprintf("Updating %v to WANTED with error %v", toUpdateToWanted.Want, err))
-					if err == nil {
-						toUpdateToWanted.Status = pb.WantListEntry_WANTED
-					}
-				}
-
-				if toUpdateToWanted == nil {
-					s.Log(fmt.Sprintf("Updating full wants for %v", list.GetName()))
-					for _, v := range list.Wants {
-						s.updateWant(ctx, v, list)
-					}
-				}
-
-				list.LastProcessTime = time.Now().Unix()
-				break
 			}
+
+			if toUpdateToWanted != nil {
+				err := s.wantBridge.want(ctx, toUpdateToWanted.Want, list.GetRetireTime(), list.GetBudget())
+				s.Log(fmt.Sprintf("Updating %v to WANTED with error %v", toUpdateToWanted.Want, err))
+				if err == nil {
+					toUpdateToWanted.Status = pb.WantListEntry_WANTED
+				}
+			}
+
+			if toUpdateToWanted == nil {
+				s.Log(fmt.Sprintf("Updating full wants for %v", list.GetName()))
+				for _, v := range list.Wants {
+					s.updateWant(ctx, v, list)
+				}
+			}
+
+			list.LastProcessTime = time.Now().Unix()
+			break
 		} else {
 			active := true
 			for _, w := range list.GetWants() {
