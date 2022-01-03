@@ -79,7 +79,7 @@ func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64, budge
 	if err != nil && status.Convert(err).Code() != codes.FailedPrecondition {
 		return err
 	}
-	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_ANYTIME_LIST, RetireTime: retire})
+	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_ANYTIME_LIST, RetireTime: retire, Budget: budget})
 	return err
 }
 
