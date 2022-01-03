@@ -30,7 +30,7 @@ type rcBridge interface {
 }
 
 type wantBridge interface {
-	want(ctx context.Context, id int32, retire int64) error
+	want(ctx context.Context, id int32, retire int64, budget string) error
 	unwant(ctx context.Context, id int32) error
 	get(ctx context.Context, id int32) (*pbrw.MasterWant, error)
 }
@@ -67,7 +67,7 @@ type prodWantBridge struct {
 	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
-func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64) error {
+func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64, budget string) error {
 	conn, err := p.dial(ctx, "recordwants")
 	if err != nil {
 		return err
@@ -75,7 +75,7 @@ func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64) error
 	defer conn.Close()
 
 	client := pbrw.NewWantServiceClient(conn)
-	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id})
+	_, err = client.AddWant(ctx, &pbrw.AddWantRequest{ReleaseId: id, Budget: budget})
 	if err != nil && status.Convert(err).Code() != codes.FailedPrecondition {
 		return err
 	}

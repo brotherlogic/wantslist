@@ -35,7 +35,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 			want, err := s.wantBridge.get(ctx, v.Want)
 			s.Log(fmt.Sprintf("Got want: %v, %v", want, err))
 			if err != nil || want.Level != pbrw.MasterWant_ANYTIME_LIST || want.GetRetireTime() != list.GetRetireTime() {
-				return s.wantBridge.want(ctx, v.Want, list.GetRetireTime())
+				return s.wantBridge.want(ctx, v.Want, list.GetRetireTime(), list.GetBudget())
 			}
 		}
 	} else if v.Status == pb.WantListEntry_UNPROCESSED {
@@ -64,7 +64,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, d time
 				}
 
 				if toUpdateToWanted != nil {
-					err := s.wantBridge.want(ctx, toUpdateToWanted.Want, list.GetRetireTime())
+					err := s.wantBridge.want(ctx, toUpdateToWanted.Want, list.GetRetireTime(), list.GetBudget())
 					s.Log(fmt.Sprintf("Updating %v to WANTED with error %v", toUpdateToWanted.Want, err))
 					if err == nil {
 						toUpdateToWanted.Status = pb.WantListEntry_WANTED

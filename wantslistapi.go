@@ -17,8 +17,8 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 		return nil, err
 	}
 
-	if len(config.Lists) > 5 {
-		return nil, fmt.Errorf("You need to have 5 lists - you have %v", len(config.Lists))
+	if len(config.Lists) > 3 {
+		return nil, fmt.Errorf("You need to have 3 lists - you have %v", len(config.Lists))
 	}
 
 	req.Add.Year = int32(time.Now().Year())
