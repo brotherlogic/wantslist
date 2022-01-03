@@ -72,6 +72,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, d time
 				}
 
 				if toUpdateToWanted == nil {
+					s.Log(fmt.Sprintf("Updating full wants for %v", list.GetName()))
 					for _, v := range list.Wants {
 						s.updateWant(ctx, v, list)
 					}
