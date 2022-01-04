@@ -32,6 +32,27 @@ func (s *Server) AddWantListItem(ctx context.Context, req *pb.AddWantListItemReq
 	return nil, fmt.Errorf("Cannot find list: %v", req.GetListName())
 }
 
+func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListItemRequest) (*pb.DeleteWantListItemResponse, error) {
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, list := range config.GetLists() {
+		if list.GetName() == req.GetListName() {
+			var wants []*pb.WantListEntry
+			for _, elem := range list.GetWants() {
+				if elem.GetWant() != req.GetEntry().GetWant() {
+					wants = append(wants, elem)
+				}
+			}
+			list.Wants = wants
+		}
+	}
+
+	return &pb.DeleteWantListItemResponse{}, s.save(ctx, config)
+}
+
 //AddWantList adds a want list
 func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*pb.AddWantListResponse, error) {
 	config, err := s.load(ctx)
