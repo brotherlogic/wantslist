@@ -17,6 +17,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WantServiceClient interface {
+	AddWantListItem(ctx context.Context, in *AddWantListItemRequest, opts ...grpc.CallOption) (*AddWantListItemResponse, error)
 	AddWantList(ctx context.Context, in *AddWantListRequest, opts ...grpc.CallOption) (*AddWantListResponse, error)
 	GetWantList(ctx context.Context, in *GetWantListRequest, opts ...grpc.CallOption) (*GetWantListResponse, error)
 	DeleteWantList(ctx context.Context, in *DeleteWantlistRequest, opts ...grpc.CallOption) (*DeleteWantlistResponse, error)
@@ -28,6 +29,15 @@ type wantServiceClient struct {
 
 func NewWantServiceClient(cc grpc.ClientConnInterface) WantServiceClient {
 	return &wantServiceClient{cc}
+}
+
+func (c *wantServiceClient) AddWantListItem(ctx context.Context, in *AddWantListItemRequest, opts ...grpc.CallOption) (*AddWantListItemResponse, error) {
+	out := new(AddWantListItemResponse)
+	err := c.cc.Invoke(ctx, "/wantslist.WantService/AddWantListItem", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *wantServiceClient) AddWantList(ctx context.Context, in *AddWantListRequest, opts ...grpc.CallOption) (*AddWantListResponse, error) {
@@ -61,6 +71,7 @@ func (c *wantServiceClient) DeleteWantList(ctx context.Context, in *DeleteWantli
 // All implementations should embed UnimplementedWantServiceServer
 // for forward compatibility
 type WantServiceServer interface {
+	AddWantListItem(context.Context, *AddWantListItemRequest) (*AddWantListItemResponse, error)
 	AddWantList(context.Context, *AddWantListRequest) (*AddWantListResponse, error)
 	GetWantList(context.Context, *GetWantListRequest) (*GetWantListResponse, error)
 	DeleteWantList(context.Context, *DeleteWantlistRequest) (*DeleteWantlistResponse, error)
@@ -70,6 +81,9 @@ type WantServiceServer interface {
 type UnimplementedWantServiceServer struct {
 }
 
+func (UnimplementedWantServiceServer) AddWantListItem(context.Context, *AddWantListItemRequest) (*AddWantListItemResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddWantListItem not implemented")
+}
 func (UnimplementedWantServiceServer) AddWantList(context.Context, *AddWantListRequest) (*AddWantListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddWantList not implemented")
 }
@@ -89,6 +103,24 @@ type UnsafeWantServiceServer interface {
 
 func RegisterWantServiceServer(s grpc.ServiceRegistrar, srv WantServiceServer) {
 	s.RegisterService(&_WantService_serviceDesc, srv)
+}
+
+func _WantService_AddWantListItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddWantListItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WantServiceServer).AddWantListItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/wantslist.WantService/AddWantListItem",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WantServiceServer).AddWantListItem(ctx, req.(*AddWantListItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _WantService_AddWantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -149,6 +181,10 @@ var _WantService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "wantslist.WantService",
 	HandlerType: (*WantServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddWantListItem",
+			Handler:    _WantService_AddWantListItem_Handler,
+		},
 		{
 			MethodName: "AddWantList",
 			Handler:    _WantService_AddWantList_Handler,

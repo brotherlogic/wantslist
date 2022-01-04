@@ -40,6 +40,12 @@ message WantList {
   string budget = 8;
 }
 
+message AddWantListItemRequest {
+  string list_name = 1;
+  WantListEntry entry = 2;
+}
+
+message AddWantListItemResponse {}
 
 message AddWantListRequest {
   WantList add = 1;
@@ -59,6 +65,7 @@ message DeleteWantlistRequest {
 message DeleteWantlistResponse {}
 
 service WantService {
+  rpc AddWantListItem(AddWantListItemRequest) returns (AddWantListItemResponse) {};
   rpc AddWantList(AddWantListRequest) returns (AddWantListResponse) {};
   rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
   rpc DeleteWantList(DeleteWantlistRequest) returns (DeleteWantlistResponse) {};

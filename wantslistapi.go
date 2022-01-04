@@ -10,6 +10,28 @@ import (
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
+func (s *Server) AddWantListItem(ctx context.Context, req *pb.AddWantListItemRequest) (*pb.AddWantListItemResponse, error) {
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, list := range config.GetLists() {
+		if list.GetName() == req.GetListName() {
+			for _, elem := range list.GetWants() {
+				if elem.GetWant() == req.GetEntry().GetWant() {
+					return nil, fmt.Errorf("Already present")
+				}
+			}
+
+			list.Wants = append(list.Wants, req.GetEntry())
+			return &pb.AddWantListItemResponse{}, s.save(ctx, config)
+		}
+	}
+
+	return nil, fmt.Errorf("Cannot find list: %v", req.GetListName())
+}
+
 //AddWantList adds a want list
 func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*pb.AddWantListResponse, error) {
 	config, err := s.load(ctx)
