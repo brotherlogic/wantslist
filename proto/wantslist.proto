@@ -72,7 +72,7 @@ message DeleteWantlistRequest {
 message DeleteWantlistResponse {}
 
 service WantService {
-  rpc DeketeWantListItem(DeleteWantListItemRequest) returns (DeleteWantListItemResponse) {};
+  rpc DeleteWantListItem(DeleteWantListItemRequest) returns (DeleteWantListItemResponse) {};
   rpc AddWantListItem(AddWantListItemRequest) returns (AddWantListItemResponse) {};
   rpc AddWantList(AddWantListRequest) returns (AddWantListResponse) {};
   rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
