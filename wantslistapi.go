@@ -20,7 +20,7 @@ func (s *Server) AddWantListItem(ctx context.Context, req *pb.AddWantListItemReq
 		if list.GetName() == req.GetListName() {
 			for _, elem := range list.GetWants() {
 				if elem.GetWant() == req.GetEntry().GetWant() {
-					return nil, fmt.Errorf("Already present")
+					return &pb.AddWantListItemResponse{}, nil
 				}
 			}
 
