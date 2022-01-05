@@ -96,6 +96,8 @@ func main() {
 		switch bits[1] {
 		case "STANDARD":
 			list.Type = pb.WantList_STANDARD
+		case "ALL_IN":
+			list.Type = pb.WantList_ALL_IN
 		default:
 			log.Fatalf("%v is an unknown speed", bits[1])
 		}

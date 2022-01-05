@@ -78,7 +78,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 			}
 
 			list.LastProcessTime = time.Now().Unix()
-			break
 		} else {
 			active := true
 			for _, w := range list.GetWants() {
