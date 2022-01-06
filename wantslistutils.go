@@ -46,9 +46,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 
 func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error {
 	for _, list := range config.Lists {
-		if list.GetName() == "digital" {
-			list.Type = pb.WantList_ALL_IN
-		}
+
 		if list.GetType() != pb.WantList_ALL_IN {
 			sort.SliceStable(list.Wants, func(i2, j2 int) bool {
 				return list.Wants[i2].Index < list.Wants[j2].Index
