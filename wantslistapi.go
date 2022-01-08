@@ -101,5 +101,23 @@ func (s *Server) DeleteWantList(ctx context.Context, req *pb.DeleteWantlistReque
 
 //ClientUpdate on an updated record
 func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest) (*rcpb.ClientUpdateResponse, error) {
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := s.rcBridge.getRecord(ctx, req.GetInstanceId())
+	if err != nil {
+		return nil, err
+	}
+
+	for _, list := range config.GetLists() {
+		for _, want := range list.GetWants() {
+			if want.Want == r.GetRelease().GetId() && want.GetStatus() == pb.WantListEntry_WANTED {
+				want.Status = pb.WantListEntry_LIMBO
+			}
+		}
+	}
+
 	return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx)
 }
