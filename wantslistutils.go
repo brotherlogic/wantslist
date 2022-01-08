@@ -12,12 +12,8 @@ import (
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
-func (s *Server) prodProcess(ctx context.Context) error {
-	config, err := s.load(ctx)
-	if err == nil {
-		err = s.processWantLists(ctx, config)
-	}
-	return err
+func (s *Server) prodProcess(ctx context.Context, config *pb.Config) error {
+	return s.processWantLists(ctx, config)
 }
 
 func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.WantList) error {

@@ -120,5 +120,5 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 		}
 	}
 
-	return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx)
+	return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
 }
