@@ -27,6 +27,7 @@ const (
 
 type rcBridge interface {
 	getRecord(ctx context.Context, id int32) (*rcpb.Record, error)
+	getSpRecord(ctx context.Context, id int32) (*rcpb.Record, error)
 }
 
 type wantBridge interface {
@@ -61,6 +62,22 @@ func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*rcpb.Record, e
 	}
 
 	return nil, fmt.Errorf("Cannot locate %v", id)
+}
+
+func (p *prodRcBridge) getSpRecord(ctx context.Context, iid int32) (*rcpb.Record, error) {
+	conn, err := p.dial(ctx, "recordcollection")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := rcpb.NewRecordCollectionServiceClient(conn)
+	ids, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: iid})
+	if err != nil {
+		return nil, err
+	}
+
+	return ids.GetRecord(), nil
 }
 
 type prodWantBridge struct {

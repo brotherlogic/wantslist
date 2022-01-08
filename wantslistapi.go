@@ -106,7 +106,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 		return nil, err
 	}
 
-	r, err := s.rcBridge.getRecord(ctx, req.GetInstanceId())
+	r, err := s.rcBridge.getSpRecord(ctx, req.GetInstanceId())
 	if err != nil {
 		return nil, err
 	}
