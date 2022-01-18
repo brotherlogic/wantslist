@@ -12,6 +12,7 @@ import (
 	"github.com/brotherlogic/goserver/utils"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	pbrs "github.com/brotherlogic/recordsales/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
@@ -127,5 +128,35 @@ func main() {
 			log.Fatalf("Error adding wantlist: %v", err)
 		}
 		log.Printf("ADDED: %v", resp)
+	case "cost":
+		conn, err := utils.LFDialServer(ctx, "recordsales")
+		if err != nil {
+			log.Fatalf("Can't dial: %v", err)
+		}
+		rsclient := pbrs.NewSaleServiceClient(conn)
+
+		file, err := os.Open(os.Args[2])
+		if err != nil {
+			log.Fatalf("Error reading file: %v", err)
+		}
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		scanner.Scan()
+
+		total := float32(0)
+		for scanner.Scan() {
+			iv, err := strconv.Atoi(scanner.Text())
+			if err != nil {
+				log.Fatalf("Parse error: %v", err)
+			}
+			cost, err := rsclient.GetPrice(ctx, &pbrs.GetPriceRequest{Id: int32(iv)})
+			if err != nil {
+				log.Fatalf("Can't get sale price: %v", err)
+			}
+			fmt.Printf("%v: %v\n", iv, cost.Prices.GetLatest().GetPrice())
+			total += cost.Prices.GetLatest().GetPrice()
+		}
+		fmt.Printf("Total = %v", total)
 	}
 }

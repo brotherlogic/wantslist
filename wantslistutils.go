@@ -41,6 +41,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 }
 
 func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error {
+	defer s.CtxLog(ctx, "Complete processing")
 	for _, list := range config.Lists {
 
 		if list.GetType() != pb.WantList_ALL_IN {
@@ -82,6 +83,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 					active = false
 				}
 			}
+			s.CtxLog(ctx, fmt.Sprintf("Procesing %v with %v", list.GetName(), active))
 
 			if active {
 				for _, w := range list.GetWants() {

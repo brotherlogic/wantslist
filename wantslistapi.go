@@ -44,6 +44,8 @@ func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListI
 			for _, elem := range list.GetWants() {
 				if elem.GetWant() != req.GetEntry().GetWant() {
 					wants = append(wants, elem)
+				} else {
+					s.wantBridge.unwant(ctx, elem.GetWant())
 				}
 			}
 			list.Wants = wants
