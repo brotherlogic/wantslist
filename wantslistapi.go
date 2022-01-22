@@ -118,6 +118,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 			if want.Want == r.GetRelease().GetId() && want.GetStatus() == pb.WantListEntry_WANTED {
 				s.CtxLog(ctx, fmt.Sprintf("Marking %v from %v as LIMBO", want.Want, list.GetName()))
 				want.Status = pb.WantListEntry_LIMBO
+				return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
 			}
 		}
 	}
