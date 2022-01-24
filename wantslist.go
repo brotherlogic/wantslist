@@ -32,7 +32,7 @@ type rcBridge interface {
 
 type wantBridge interface {
 	want(ctx context.Context, id int32, retire int64, budget string) error
-	unwant(ctx context.Context, id int32) error
+	unwant(ctx context.Context, id int32, budget string) error
 	get(ctx context.Context, id int32) (*pbrw.MasterWant, error)
 }
 
@@ -100,7 +100,7 @@ func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64, budge
 	return err
 }
 
-func (p *prodWantBridge) unwant(ctx context.Context, id int32) error {
+func (p *prodWantBridge) unwant(ctx context.Context, id int32, budget string) error {
 	conn, err := p.dial(ctx, "recordwants")
 	if err != nil {
 		return err
@@ -112,7 +112,7 @@ func (p *prodWantBridge) unwant(ctx context.Context, id int32) error {
 	if err != nil && status.Convert(err).Code() != codes.FailedPrecondition {
 		return err
 	}
-	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Level: pbrw.MasterWant_NEVER})
+	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id}, Budget: budget, Level: pbrw.MasterWant_NEVER})
 	return err
 }
 

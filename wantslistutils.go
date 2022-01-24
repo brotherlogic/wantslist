@@ -35,7 +35,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 			}
 		}
 	} else if v.Status == pb.WantListEntry_UNPROCESSED {
-		s.wantBridge.unwant(ctx, v.Want)
+		s.wantBridge.unwant(ctx, v.Want, list.GetBudget())
 	}
 	return nil
 }
