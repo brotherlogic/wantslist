@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
@@ -110,6 +112,10 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 
 	r, err := s.rcBridge.getSpRecord(ctx, req.GetInstanceId())
 	if err != nil {
+		// Don't process a deleted record
+		if status.Convert(err).Code() == codes.OutOfRange {
+			return &rcpb.ClientUpdateResponse{}, nil
+		}
 		return nil, err
 	}
 
