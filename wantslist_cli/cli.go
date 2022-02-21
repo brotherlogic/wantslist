@@ -49,7 +49,7 @@ func main() {
 
 		fmt.Printf("Found %v lists\n", len(lists.Lists))
 		for i, list := range lists.Lists {
-			fmt.Printf("List %v. %v [%v]\n", (i + 1), list.Name, list.GetType())
+			fmt.Printf("List %v. %v [%v ; %v]\n", (i + 1), list.Name, list.GetType(), list.GetBudget())
 			for _, entry := range list.Wants {
 				fmt.Printf("  %v. %v (%v)\n", entry.Index, entry.Status, entry.Want)
 			}
