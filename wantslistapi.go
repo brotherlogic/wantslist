@@ -136,5 +136,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 		}
 	}
 
+	s.CtxLog(ctx, fmt.Sprintf("Unable to locate %v in any want lists", r.GetRelease().GetId()))
+
 	return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
 }
