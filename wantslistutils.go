@@ -14,7 +14,7 @@ import (
 
 func (s *Server) prodProcess(ctx context.Context, config *pb.Config) error {
 	if time.Since(s.lastRun) < time.Hour {
-		return nil
+		return s.save(ctx, config)
 	}
 	s.lastRun = time.Now()
 	return s.processWantLists(ctx, config)
