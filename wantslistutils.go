@@ -13,6 +13,7 @@ import (
 )
 
 func (s *Server) prodProcess(ctx context.Context, config *pb.Config) error {
+	s.CtxLog(ctx, fmt.Sprintf("Running pproc: %v", time.Since(s.lastRun)))
 	if time.Since(s.lastRun) < time.Hour {
 		return s.save(ctx, config)
 	}
