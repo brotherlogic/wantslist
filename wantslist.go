@@ -169,6 +169,7 @@ func (s *Server) ReportHealth() bool {
 }
 
 func (s *Server) save(ctx context.Context, config *pb.Config) error {
+	s.CtxLog(ctx, fmt.Sprintf("SAVING: %v", config))
 	return s.KSclient.Save(ctx, KEY, config)
 }
 
@@ -182,13 +183,11 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 
 	config = data.(*pb.Config)
 
-	var lists []*pb.WantList
 	for _, list := range config.GetLists() {
 		if list.GetName() == "digital" {
 			list.Type = pb.WantList_ALL_IN
 		}
 	}
-	config.Lists = lists
 
 	return config, nil
 }
