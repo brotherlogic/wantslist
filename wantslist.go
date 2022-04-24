@@ -184,9 +184,6 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 
 	var lists []*pb.WantList
 	for _, list := range config.GetLists() {
-		if time.Since(time.Unix(list.GetTimeAdded(), 0)) < time.Hour*24*30*3 {
-			lists = append(lists, list)
-		}
 		if list.GetName() == "digital" {
 			list.Type = pb.WantList_ALL_IN
 		}
