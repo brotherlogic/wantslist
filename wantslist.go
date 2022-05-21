@@ -186,6 +186,7 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 	for _, list := range config.GetLists() {
 		if list.GetName() == "digital" {
 			list.Type = pb.WantList_ALL_IN
+			list.Budget = "digital"
 		}
 	}
 
