@@ -127,7 +127,9 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 					want.Status = pb.WantListEntry_LIMBO
 					return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
 				} else if want.GetStatus() == pb.WantListEntry_LIMBO {
-					if list.GetType() == pb.WantList_ALL_IN && r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_STAGED ||
+					if list.GetType() == pb.WantList_ALL_IN && 
+					r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_STAGED ||
+					r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_HIGH_SCHOOL ||
 						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_HIGH_SCHOOL {
 						want.Status = pb.WantListEntry_COMPLETE
 						return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
