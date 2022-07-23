@@ -188,6 +188,10 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 			list.Type = pb.WantList_ALL_IN
 			list.Budget = "digital"
 		}
+		if list.GetName() == "digital_keep" {
+			list.Type = pb.WantList_ALL_IN
+			list.Budget = "digital_keep"
+		}
 	}
 
 	return config, nil
