@@ -193,7 +193,7 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 			list.Budget = "digital_keep"
 		}
 		if list.GetName() == "The Fall" {
-			list.Type = pb.WantList_ALL_IN
+			list.Type = pb.WantList_RAPID
 		}
 	}
 
