@@ -24,7 +24,7 @@ func (s *Server) prodProcess(ctx context.Context, config *pb.Config) error {
 func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.WantList) error {
 	if v.Status == pb.WantListEntry_WANTED {
 		r, err := s.rcBridge.getRecord(ctx, v.Want)
-		s.Log(fmt.Sprintf("GOT Record: %v, %v", r, err))
+		s.CtxLog(ctx, fmt.Sprintf("GOT Record: %v, %v", r, err))
 		if err == nil && ((list.GetType() == pb.WantList_STANDARD &&
 			r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED &&
 			r.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED &&
@@ -34,7 +34,7 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 			v.Status = pb.WantListEntry_COMPLETE
 		} else if err != nil {
 			want, err := s.wantBridge.get(ctx, v.Want)
-			s.Log(fmt.Sprintf("Got want: %v, %v", want, err))
+			s.CtxLog(ctx, fmt.Sprintf("Got want: %v, %v", want, err))
 			if err != nil || want.Level != pbrw.MasterWant_ANYTIME_LIST || want.GetRetireTime() != list.GetRetireTime() {
 				return s.wantBridge.want(ctx, v.Want, list.GetRetireTime(), list.GetBudget())
 			}
@@ -67,14 +67,14 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 
 			if toUpdateToWanted != nil {
 				err := s.wantBridge.want(ctx, toUpdateToWanted.Want, list.GetRetireTime(), list.GetBudget())
-				s.Log(fmt.Sprintf("Updating %v to WANTED with error %v", toUpdateToWanted.Want, err))
+				s.CtxLog(ctx, fmt.Sprintf("Updating %v to WANTED with error %v", toUpdateToWanted.Want, err))
 				if err == nil {
 					toUpdateToWanted.Status = pb.WantListEntry_WANTED
 				}
 			}
 
 			if toUpdateToWanted == nil {
-				s.Log(fmt.Sprintf("Updating full wants for %v", list.GetName()))
+				s.CtxLog(ctx, fmt.Sprintf("Updating full wants for %v", list.GetName()))
 				for _, v := range list.Wants {
 					s.updateWant(ctx, v, list)
 				}
