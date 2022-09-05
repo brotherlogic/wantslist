@@ -194,6 +194,11 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 		}
 		if list.GetName() == "The Fall" {
 			list.Type = pb.WantList_RAPID
+			for _, elem := range list.GetWants() {
+				if elem.GetWant() == 143755 {
+					elem.Want = 1437557
+				}
+			}
 		}
 	}
 
