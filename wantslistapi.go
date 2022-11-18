@@ -54,9 +54,7 @@ func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListI
 					s.wantBridge.unwant(ctx, elem.GetWant(), list.GetBudget())
 				}
 			}
-			if !found {
-				return nil, status.Errorf(codes.InvalidArgument, "Unable to locate %v in %v", req, list)
-			}
+
 			list.Wants = wants
 		}
 	}
