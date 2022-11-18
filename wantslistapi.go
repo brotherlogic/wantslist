@@ -42,11 +42,13 @@ func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListI
 
 	for _, list := range config.GetLists() {
 		if list.GetName() == req.GetListName() {
+			s.CtxLog(ctx, fmt.Sprintf("Found list called %v", req.GetListName()))
 			var wants []*pb.WantListEntry
 			for _, elem := range list.GetWants() {
 				if elem.GetWant() != req.GetEntry().GetWant() {
 					wants = append(wants, elem)
 				} else {
+					s.CtxLog(ctx, fmt.Sprintf("Found Want"))
 					s.wantBridge.unwant(ctx, elem.GetWant(), list.GetBudget())
 				}
 			}
@@ -57,7 +59,7 @@ func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListI
 	return &pb.DeleteWantListItemResponse{}, s.save(ctx, config)
 }
 
-//AddWantList adds a want list
+// AddWantList adds a want list
 func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*pb.AddWantListResponse, error) {
 	config, err := s.load(ctx)
 	if err != nil {
@@ -76,7 +78,7 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 	return &pb.AddWantListResponse{}, s.save(ctx, config)
 }
 
-//GetWantList gets a want list
+// GetWantList gets a want list
 func (s *Server) GetWantList(ctx context.Context, req *pb.GetWantListRequest) (*pb.GetWantListResponse, error) {
 	config, err := s.load(ctx)
 	if err != nil {
@@ -85,7 +87,7 @@ func (s *Server) GetWantList(ctx context.Context, req *pb.GetWantListRequest) (*
 	return &pb.GetWantListResponse{Lists: config.Lists}, nil
 }
 
-//GetWantList gets a want list
+// GetWantList gets a want list
 func (s *Server) DeleteWantList(ctx context.Context, req *pb.DeleteWantlistRequest) (*pb.DeleteWantlistResponse, error) {
 	config, err := s.load(ctx)
 	if err != nil {
@@ -103,7 +105,7 @@ func (s *Server) DeleteWantList(ctx context.Context, req *pb.DeleteWantlistReque
 	return &pb.DeleteWantlistResponse{}, s.save(ctx, config)
 }
 
-//ClientUpdate on an updated record
+// ClientUpdate on an updated record
 func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest) (*rcpb.ClientUpdateResponse, error) {
 	config, err := s.load(ctx)
 	if err != nil {
