@@ -136,7 +136,7 @@ func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, e
 	return want.GetWant()[0], err
 }
 
-//Server main server type
+// Server main server type
 type Server struct {
 	*goserver.GoServer
 	wantBridge wantBridge
@@ -169,7 +169,6 @@ func (s *Server) ReportHealth() bool {
 }
 
 func (s *Server) save(ctx context.Context, config *pb.Config) error {
-	s.CtxLog(ctx, fmt.Sprintf("SAVING: %v", config))
 	return s.KSclient.Save(ctx, KEY, config)
 }
 

@@ -44,13 +44,18 @@ func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListI
 		if list.GetName() == req.GetListName() {
 			s.CtxLog(ctx, fmt.Sprintf("Found list called %v", req.GetListName()))
 			var wants []*pb.WantListEntry
+			found := false
 			for _, elem := range list.GetWants() {
 				if elem.GetWant() != req.GetEntry().GetWant() {
+					found = true
 					wants = append(wants, elem)
 				} else {
 					s.CtxLog(ctx, fmt.Sprintf("Found Want"))
 					s.wantBridge.unwant(ctx, elem.GetWant(), list.GetBudget())
 				}
+			}
+			if !found {
+				return nil, status.Errorf(codes.InvalidArgument, "Unable to locate %v in %v", req, list)
 			}
 			list.Wants = wants
 		}

@@ -54,6 +54,13 @@ func main() {
 			}
 		}
 	case "delete":
+		num, err := strconv.ParseInt(os.Args[3], 10, 32)
+		if err != nil {
+			log.Fatalf("Bad num: %v", err)
+		}
+		val, err := client.DeleteWantListItem(ctx, &pb.DeleteWantListItemRequest{ListName: os.Args[2], Entry: &pb.WantListEntry{Want: int32(num)}})
+		log.Printf("%v -> %v", val, err)
+	case "sdelete":
 		_, err := client.DeleteWantList(ctx, &pb.DeleteWantlistRequest{Name: os.Args[2]})
 		if err != nil {
 			log.Fatalf("Error getting wantlists: %v", err)
