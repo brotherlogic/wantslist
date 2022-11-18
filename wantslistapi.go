@@ -55,6 +55,7 @@ func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListI
 				}
 			}
 
+			s.CtxLog(ctx, fmt.Sprintf("Found %v", found))
 			list.Wants = wants
 		}
 	}
