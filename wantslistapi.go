@@ -70,9 +70,11 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 		return nil, err
 	}
 
-	/*if len(config.Lists) > 3 {
-		return nil, fmt.Errorf("You need to have 3 lists - you have %v", len(config.Lists))
-	}*/
+	for _, list := range config.GetLists() {
+		if list.GetName() == req.Add.GetName() {
+			return nil, status.Errorf(codes.AlreadyExists, "%v already exists", req.Add.GetName())
+		}
+	}
 
 	req.Add.Year = int32(time.Now().Year())
 	req.Add.TimeAdded = time.Now().Unix()
