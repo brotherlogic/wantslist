@@ -150,7 +150,7 @@ func Init() *Server {
 		GoServer:   &goserver.GoServer{},
 		wantBridge: &prodWantBridge{},
 		rcBridge:   &prodRcBridge{},
-		lastRun:    time.Now(),
+		lastRun:    time.Now().Add(-time.Hour * 2),
 	}
 	s.rcBridge = &prodRcBridge{dial: s.FDialServer}
 	s.wantBridge = &prodWantBridge{dial: s.FDialServer}

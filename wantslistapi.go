@@ -128,6 +128,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 
 	r, err := s.rcBridge.getSpRecord(ctx, req.GetInstanceId())
 	if err != nil {
+		s.CtxLog(ctx, fmt.Sprintf("Unable to locate %v -> %v", req.GetInstanceId(), err))
 		// Don't process a deleted record
 		if status.Convert(err).Code() == codes.OutOfRange {
 			return &rcpb.ClientUpdateResponse{}, nil
