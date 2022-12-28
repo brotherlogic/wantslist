@@ -88,7 +88,15 @@ func (s *Server) GetWantList(ctx context.Context, req *pb.GetWantListRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GetWantListResponse{Lists: config.Lists}, nil
+
+	var lists []*pb.WantList
+	for _, l := range config.Lists {
+		if req.GetName() == "" || req.GetName() == l.GetName() {
+			lists = append(lists, l)
+		}
+	}
+
+	return &pb.GetWantListResponse{Lists: lists}, nil
 }
 
 // GetWantList gets a want list

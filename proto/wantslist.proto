@@ -60,7 +60,9 @@ message AddWantListRequest {
 
 message AddWantListResponse {}
 
-message GetWantListRequest {}
+message GetWantListRequest {
+  string name = 1;
+}
 
 message GetWantListResponse {
   repeated WantList lists = 1;
