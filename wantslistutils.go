@@ -10,7 +10,28 @@ import (
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 )
+
+var (
+	togoMetric = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "wantslist_togo",
+		Help: "The number of outstanding wants",
+	}, []string{"list", "budget"})
+)
+
+func recordMetrics(config *pb.Config) {
+	for _, list := range config.GetLists() {
+		togo := 0
+		for _, entry := range list.GetWants() {
+			if entry.Status == pb.WantListEntry_WANTED {
+				togo++
+			}
+		}
+		togoMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(togo))
+	}
+}
 
 func (s *Server) prodProcess(ctx context.Context, config *pb.Config) error {
 	s.CtxLog(ctx, fmt.Sprintf("Running pproc: %v", time.Since(s.lastRun)))
