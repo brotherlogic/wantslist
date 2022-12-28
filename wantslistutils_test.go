@@ -112,7 +112,7 @@ func TestFirstEntrySet(t *testing.T) {
 
 func TestFirstEntryUpdated(t *testing.T) {
 	s := InitTestServer()
-	s.AddWantList(context.Background(), &pb.AddWantListRequest{
+	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
 			Name: "TestList",
 			Wants: []*pb.WantListEntry{
@@ -121,13 +121,22 @@ func TestFirstEntryUpdated(t *testing.T) {
 			},
 		},
 	})
+	if err != nil {
+		t.Fatalf("Bad add list: %v", err)
+	}
 
-	s.prodProcess(context.Background(), &pb.Config{})
+	// Blank update does a prod procss
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
 		t.Fatalf("Error getting wants: %v", err)
 	}
+
+	if len(lists.GetLists()) == 0 || len(lists.GetLists()[0].GetWants()) < 2 {
+		t.Fatalf("Bad list return: %v", lists)
+	}
+
 	if lists.Lists[0].Wants[1].Status != pb.WantListEntry_WANTED {
 		t.Errorf("Want has not been updated following first complete")
 	}
@@ -145,7 +154,8 @@ func TestFirstEntryUpdatedToCollection(t *testing.T) {
 		},
 	})
 
-	s.prodProcess(context.Background(), &pb.Config{})
+	// Blank update does a prod procss
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
@@ -169,7 +179,8 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 		},
 	})
 
-	s.prodProcess(context.Background(), &pb.Config{})
+	// Blank update does a prod procss
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
