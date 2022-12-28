@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"testing"
 	"time"
 
@@ -30,11 +29,22 @@ func (t *testRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, e
 	return &pbrc.Record{Release: &pbgd.Release{Id: id}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED}}, nil
 }
 
+func (t *testRcBridge) getSpRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
+	return nil, nil
+}
+
 type testWantBridge struct {
 	fail bool
 }
 
-func (t *testWantBridge) want(ctx context.Context, id int32) error {
+func (t *testWantBridge) want(ctx context.Context, id int32, retire int64, budget string) error {
+	if t.fail {
+		return fmt.Errorf("Built to fail")
+	}
+	return nil
+}
+
+func (t *testWantBridge) unwant(ctx context.Context, id int32, budget string) error {
 	if t.fail {
 		return fmt.Errorf("Built to fail")
 	}
@@ -53,12 +63,6 @@ func InitTestServer() *Server {
 	s.GoServer.KSclient.Save(context.Background(), KEY, &pb.Config{})
 	s.wantBridge = &testWantBridge{}
 	s.rcBridge = &testRcBridge{}
-
-	d, err := time.ParseDuration("0s")
-	if err != nil {
-		log.Fatalf("Error parsing time")
-	}
-	s.listWait = d
 
 	return s
 }
@@ -108,7 +112,7 @@ func TestFirstEntrySet(t *testing.T) {
 
 func TestFirstEntryUpdated(t *testing.T) {
 	s := InitTestServer()
-	s.AddWantList(context.Background(), &pb.AddWantListRequest{
+	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
 			Name: "TestList",
 			Wants: []*pb.WantListEntry{
@@ -117,13 +121,22 @@ func TestFirstEntryUpdated(t *testing.T) {
 			},
 		},
 	})
+	if err != nil {
+		t.Fatalf("Bad add list: %v", err)
+	}
 
-	s.prodProcess(context.Background())
+	// Blank update does a prod procss
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
 		t.Fatalf("Error getting wants: %v", err)
 	}
+
+	if len(lists.GetLists()) == 0 || len(lists.GetLists()[0].GetWants()) < 2 {
+		t.Fatalf("Bad list return: %v", lists)
+	}
+
 	if lists.Lists[0].Wants[1].Status != pb.WantListEntry_WANTED {
 		t.Errorf("Want has not been updated following first complete")
 	}
@@ -141,7 +154,8 @@ func TestFirstEntryUpdatedToCollection(t *testing.T) {
 		},
 	})
 
-	s.prodProcess(context.Background())
+	// Blank update does a prod procss
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
@@ -165,7 +179,8 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 		},
 	})
 
-	s.prodProcess(context.Background())
+	// Blank update does a prod procss
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {

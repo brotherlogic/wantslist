@@ -41,7 +41,13 @@ func main() {
 		}
 
 	case "get":
-		lists, err := client.GetWantList(ctx, &pb.GetWantListRequest{})
+		var lists *pb.GetWantListResponse
+		var err error
+		if len(os.Args) > 1 {
+			lists, err = client.GetWantList(ctx, &pb.GetWantListRequest{Name: os.Args[2]})
+		} else {
+			lists, err = client.GetWantList(ctx, &pb.GetWantListRequest{})
+		}
 		if err != nil {
 			log.Fatalf("Error getting wantlists: %v", err)
 		}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"golang.org/x/net/context"
@@ -70,9 +71,11 @@ func (s *Server) AddWantList(ctx context.Context, req *pb.AddWantListRequest) (*
 		return nil, err
 	}
 
-	/*if len(config.Lists) > 3 {
-		return nil, fmt.Errorf("You need to have 3 lists - you have %v", len(config.Lists))
-	}*/
+	for _, list := range config.GetLists() {
+		if list.GetName() == req.Add.GetName() {
+			return nil, status.Errorf(codes.AlreadyExists, "%v already exists", req.Add.GetName())
+		}
+	}
 
 	req.Add.Year = int32(time.Now().Year())
 	req.Add.TimeAdded = time.Now().Unix()
@@ -88,7 +91,16 @@ func (s *Server) GetWantList(ctx context.Context, req *pb.GetWantListRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GetWantListResponse{Lists: config.Lists}, nil
+
+	var lists []*pb.WantList
+	log.Printf("HUH: %v", config.Lists)
+	for _, l := range config.Lists {
+		if req.GetName() == "" || req.GetName() == l.GetName() {
+			lists = append(lists, l)
+		}
+	}
+
+	return &pb.GetWantListResponse{Lists: lists}, nil
 }
 
 // GetWantList gets a want list
@@ -118,6 +130,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 
 	r, err := s.rcBridge.getSpRecord(ctx, req.GetInstanceId())
 	if err != nil {
+		s.CtxLog(ctx, fmt.Sprintf("Unable to locate %v -> %v", req.GetInstanceId(), err))
 		// Don't process a deleted record
 		if status.Convert(err).Code() == codes.OutOfRange {
 			return &rcpb.ClientUpdateResponse{}, nil
