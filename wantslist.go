@@ -169,6 +169,7 @@ func (s *Server) ReportHealth() bool {
 }
 
 func (s *Server) save(ctx context.Context, config *pb.Config) error {
+	recordMetrics(config)
 	return s.KSclient.Save(ctx, KEY, config)
 }
 
@@ -200,6 +201,8 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 			}
 		}
 	}
+
+	recordMetrics(config)
 
 	return config, nil
 }
