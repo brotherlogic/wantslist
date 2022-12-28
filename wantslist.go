@@ -15,6 +15,7 @@ import (
 
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
+	"github.com/brotherlogic/goserver/utils"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
@@ -239,6 +240,14 @@ func main() {
 	if err != nil {
 		return
 	}
+
+	ctx, cancel := utils.ManualContext("wantslist-init", time.Minute)
+	config, err := server.load(ctx)
+	if err != nil {
+		return
+	}
+	recordMetrics(config)
+	cancel()
 
 	server.Serve()
 }
