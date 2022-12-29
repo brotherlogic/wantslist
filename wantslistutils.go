@@ -20,6 +20,10 @@ var (
 		Name: "wantslist_togo",
 		Help: "The number of outstanding wants",
 	}, []string{"list", "budget"})
+	costMetric = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "wantslist_cost",
+		Help: "The number of outstanding wants",
+	}, []string{"list", "budget"})
 	oldest = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "wantslist_oldest_cost",
 		Help: "The number of outstanding wants",
@@ -33,12 +37,15 @@ var (
 func recordMetrics(config *pb.Config) {
 	for _, list := range config.GetLists() {
 		togo := 0
+		remaining := 0
 		for _, entry := range list.GetWants() {
 			if entry.Status == pb.WantListEntry_WANTED {
 				togo++
+				remaining += int(entry.GetEstimatedCost())
 			}
 		}
 		togoMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(togo))
+		costMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(remaining))
 	}
 }
 
