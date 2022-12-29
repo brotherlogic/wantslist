@@ -93,6 +93,14 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 }
 
 func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
+	defer func() {
+		costs := int32(0)
+		for _, entry := range list.GetWants() {
+			costs += entry.GetEstimatedCost()
+		}
+		list.OverallEstimatedCost = costs
+	}()
+
 	old := int64(math.MaxInt64)
 	new := int64(0)
 	for _, entry := range list.GetWants() {
