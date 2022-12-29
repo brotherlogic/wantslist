@@ -172,7 +172,7 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123, InstanceId: 1234}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}})
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
-			Name: "TestList",
+			Name: "TestList1",
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_WANTED},
 				&pb.WantListEntry{Index: 2, Want: 125},
