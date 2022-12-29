@@ -16,6 +16,7 @@ import (
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	"github.com/brotherlogic/goserver/utils"
+	rcc "github.com/brotherlogic/recordcollection/client"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
@@ -26,11 +27,6 @@ const (
 	KEY = "/github.com/brotherlogic/wantslist/config"
 )
 
-type rcBridge interface {
-	getRecord(ctx context.Context, id int32) (*rcpb.Record, error)
-	getSpRecord(ctx context.Context, id int32) (*rcpb.Record, error)
-}
-
 type wantBridge interface {
 	want(ctx context.Context, id int32, retire int64, budget string) error
 	unwant(ctx context.Context, id int32, budget string) error
@@ -39,46 +35,6 @@ type wantBridge interface {
 
 type prodRcBridge struct {
 	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
-}
-
-func (p *prodRcBridge) getRecord(ctx context.Context, id int32) (*rcpb.Record, error) {
-	conn, err := p.dial(ctx, "recordcollection")
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	client := rcpb.NewRecordCollectionServiceClient(conn)
-	ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_ReleaseId{int32(id)}})
-	if err != nil {
-		return nil, err
-	}
-
-	if len(ids.GetInstanceIds()) > 0 {
-		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: ids.GetInstanceIds()[0]})
-		if err != nil {
-			return nil, err
-		}
-		return rec.GetRecord(), err
-	}
-
-	return nil, fmt.Errorf("Cannot locate %v", id)
-}
-
-func (p *prodRcBridge) getSpRecord(ctx context.Context, iid int32) (*rcpb.Record, error) {
-	conn, err := p.dial(ctx, "recordcollection")
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	client := rcpb.NewRecordCollectionServiceClient(conn)
-	ids, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: iid})
-	if err != nil {
-		return nil, err
-	}
-
-	return ids.GetRecord(), nil
 }
 
 type prodWantBridge struct {
@@ -141,8 +97,8 @@ func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, e
 type Server struct {
 	*goserver.GoServer
 	wantBridge wantBridge
-	rcBridge   rcBridge
 	lastRun    time.Time
+	rcclient   *rcc.RecordCollectionClient
 }
 
 // Init builds the server
@@ -150,11 +106,10 @@ func Init() *Server {
 	s := &Server{
 		GoServer:   &goserver.GoServer{},
 		wantBridge: &prodWantBridge{},
-		rcBridge:   &prodRcBridge{},
 		lastRun:    time.Now().Add(-time.Hour * 2),
 	}
-	s.rcBridge = &prodRcBridge{dial: s.FDialServer}
 	s.wantBridge = &prodWantBridge{dial: s.FDialServer}
+	s.rcclient = &rcc.RecordCollectionClient{Gs: s.GoServer}
 	return s
 }
 

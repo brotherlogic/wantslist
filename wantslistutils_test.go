@@ -10,6 +10,7 @@ import (
 	"golang.org/x/net/context"
 
 	pbgd "github.com/brotherlogic/godiscogs"
+	rcc "github.com/brotherlogic/recordcollection/client"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
@@ -62,7 +63,7 @@ func InitTestServer() *Server {
 	s.GoServer.KSclient = *keystoreclient.GetTestClient(".test")
 	s.GoServer.KSclient.Save(context.Background(), KEY, &pb.Config{})
 	s.wantBridge = &testWantBridge{}
-	s.rcBridge = &testRcBridge{}
+	s.rcclient = &rcc.RecordCollectionClient{Test: true}
 
 	return s
 }
@@ -168,7 +169,7 @@ func TestFirstEntryUpdatedToCollection(t *testing.T) {
 
 func TestFirstEntryUpdatedToComplete(t *testing.T) {
 	s := InitTestServer()
-	s.rcBridge = &testRcBridge{returnComplete: true}
+	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123, InstanceId: 1234}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}})
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
 			Name: "TestList",
@@ -180,7 +181,8 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 	})
 
 	// Blank update does a prod procss
-	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1234})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1234})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
@@ -193,7 +195,6 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 
 func TestUpdateWant(t *testing.T) {
 	s := InitTestServer()
-	s.rcBridge = &testRcBridge{fail: true}
 
 	err := s.updateWant(context.Background(), &pb.WantListEntry{Status: pb.WantListEntry_WANTED}, &pb.WantList{})
 	if err != nil {
