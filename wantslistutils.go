@@ -92,6 +92,7 @@ func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
 			}
 			entry.EstimatedCost = int32(price.GetPrice() * 100)
 			entry.LastCostTime = time.Now().Unix()
+			return nil
 		}
 	}
 
