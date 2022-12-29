@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"time"
 
@@ -19,6 +20,14 @@ var (
 		Name: "wantslist_togo",
 		Help: "The number of outstanding wants",
 	}, []string{"list", "budget"})
+	oldest = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "wantslist_oldest_cost",
+		Help: "The number of outstanding wants",
+	})
+	newest = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "wantslist_oldest_cost",
+		Help: "The number of outstanding wants",
+	})
 )
 
 func recordMetrics(config *pb.Config) {
@@ -84,6 +93,19 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 }
 
 func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
+	old := int64(math.MaxInt64)
+	new := int64(0)
+	for _, entry := range list.GetWants() {
+		if entry.GetLastCostTime() < old {
+			old = (entry.GetLastCostTime())
+		}
+		if entry.GetLastCostTime() > new {
+			new = entry.GetLastCostTime()
+		}
+	}
+	oldest.Set(float64(old))
+	newest.Set(float64(new))
+
 	for _, entry := range list.GetWants() {
 		if time.Since(time.Unix(entry.GetLastCostTime(), 0)) > time.Hour*24*7 {
 			price, err := s.rcclient.GetPrice(ctx, &pbrc.GetPriceRequest{Id: entry.GetWant()})
