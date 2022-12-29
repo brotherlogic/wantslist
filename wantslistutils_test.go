@@ -87,6 +87,35 @@ func TestAddFail(t *testing.T) {
 	}
 }
 
+func TestGetCosts(t *testing.T) {
+	s := InitTestServer()
+	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
+		Add: &pb.WantList{
+			Name: "TestList",
+			Year: int32(time.Now().Year()),
+			Wants: []*pb.WantListEntry{
+				&pb.WantListEntry{Index: 1, Want: 123},
+				&pb.WantListEntry{Index: 2, Want: 125},
+			},
+		},
+	})
+
+	if err != nil {
+		t.Errorf("Error on add list: %v", err)
+	}
+
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+
+	list, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestList"})
+	if err != nil {
+		t.Fatalf("Error on get list: %v", err)
+	}
+
+	if list.GetLists()[0].GetWants()[0].GetEstimatedCost() == 0 {
+		t.Errorf("Cost was not recovered: %v", list)
+	}
+}
+
 func TestFirstEntrySet(t *testing.T) {
 	s := InitTestServer()
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
