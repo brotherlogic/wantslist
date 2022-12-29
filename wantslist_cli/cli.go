@@ -54,9 +54,9 @@ func main() {
 
 		fmt.Printf("Found %v lists\n", len(lists.Lists))
 		for i, list := range lists.Lists {
-			fmt.Printf("List %v. %v [%v ; %v]\n", (i + 1), list.Name, list.GetType(), list.GetBudget())
+			fmt.Printf("List %v. %v [%v ; %v] %v\n", (i + 1), list.Name, list.GetType(), list.GetBudget(), list.GetOverallEstimatedCost())
 			for _, entry := range list.Wants {
-				fmt.Printf("  %v. %v (%v)\n", entry.Index, entry.Status, entry.Want)
+				fmt.Printf("  %v. %v (%v [%v] )\n", entry.Index, entry.Status, entry.Want, entry.GetEstimatedCost())
 			}
 		}
 	case "delete":
