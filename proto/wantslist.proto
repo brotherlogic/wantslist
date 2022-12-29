@@ -21,6 +21,9 @@ message WantListEntry {
   }
 
   Status status = 3;
+  
+  int32 estimated_cost = 4;
+  int64 last_cost_time = 5;
 }
 
 message WantList {
@@ -38,6 +41,7 @@ message WantList {
   int64 time_added = 6;
   int64 retire_time = 7;
   string budget = 8;
+  int32 overall_estimated_cost = 9;
 }
 
 message AddWantListItemRequest {

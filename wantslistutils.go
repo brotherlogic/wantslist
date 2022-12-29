@@ -42,9 +42,26 @@ func (s *Server) prodProcess(ctx context.Context, config *pb.Config) error {
 	return s.processWantLists(ctx, config)
 }
 
+func (s *Server) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
+	ids, err := s.rcclient.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_ReleaseId{int32(id)}})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ids.GetInstanceIds()) > 0 {
+		rec, err := s.rcclient.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: ids.GetInstanceIds()[0]})
+		if err != nil {
+			return nil, err
+		}
+		return rec.GetRecord(), err
+	}
+
+	return nil, fmt.Errorf("Cannot locate %v", id)
+}
+
 func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.WantList) error {
 	if v.Status == pb.WantListEntry_WANTED {
-		r, err := s.rcBridge.getRecord(ctx, v.Want)
+		r, err := s.getRecord(ctx, v.Want)
 		s.CtxLog(ctx, fmt.Sprintf("GOT Record: %v, %v", r, err))
 		if err == nil && ((list.GetType() == pb.WantList_STANDARD &&
 			r.GetMetadata().Category != pbrc.ReleaseMetadata_UNLISTENED &&
@@ -66,9 +83,25 @@ func (s *Server) updateWant(ctx context.Context, v *pb.WantListEntry, list *pb.W
 	return nil
 }
 
+func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
+	for _, entry := range list.GetWants() {
+		if time.Since(time.Unix(entry.GetLastCostTime(), 0)) > time.Hour*24*7 {
+			price, err := s.rcclient.GetPrice(ctx, &pbrc.GetPriceRequest{Id: entry.GetWant()})
+			if err != nil {
+				return err
+			}
+			entry.EstimatedCost = int32(price.GetPrice() * 100)
+			entry.LastCostTime = time.Now().Unix()
+		}
+	}
+
+	return nil
+}
+
 func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error {
 	defer s.CtxLog(ctx, "Complete processing")
 	for _, list := range config.Lists {
+		s.updateCosts(ctx, list)
 
 		if list.GetType() != pb.WantList_ALL_IN {
 			sort.SliceStable(list.Wants, func(i2, j2 int) bool {

@@ -10,6 +10,7 @@ import (
 	"golang.org/x/net/context"
 
 	pbgd "github.com/brotherlogic/godiscogs"
+	rcc "github.com/brotherlogic/recordcollection/client"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
@@ -62,7 +63,7 @@ func InitTestServer() *Server {
 	s.GoServer.KSclient = *keystoreclient.GetTestClient(".test")
 	s.GoServer.KSclient.Save(context.Background(), KEY, &pb.Config{})
 	s.wantBridge = &testWantBridge{}
-	s.rcBridge = &testRcBridge{}
+	s.rcclient = &rcc.RecordCollectionClient{Test: true}
 
 	return s
 }
@@ -83,6 +84,35 @@ func TestAddFail(t *testing.T) {
 
 	if err == nil {
 		t.Errorf("Should have failed")
+	}
+}
+
+func TestGetCosts(t *testing.T) {
+	s := InitTestServer()
+	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
+		Add: &pb.WantList{
+			Name: "TestList",
+			Year: int32(time.Now().Year()),
+			Wants: []*pb.WantListEntry{
+				&pb.WantListEntry{Index: 1, Want: 123},
+				&pb.WantListEntry{Index: 2, Want: 125},
+			},
+		},
+	})
+
+	if err != nil {
+		t.Errorf("Error on add list: %v", err)
+	}
+
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+
+	list, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestList"})
+	if err != nil {
+		t.Fatalf("Error on get list: %v", err)
+	}
+
+	if list.GetLists()[0].GetWants()[0].GetEstimatedCost() == 0 {
+		t.Errorf("Cost was not recovered: %v", list)
 	}
 }
 
@@ -168,10 +198,10 @@ func TestFirstEntryUpdatedToCollection(t *testing.T) {
 
 func TestFirstEntryUpdatedToComplete(t *testing.T) {
 	s := InitTestServer()
-	s.rcBridge = &testRcBridge{returnComplete: true}
+	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123, InstanceId: 1234}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}})
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
-			Name: "TestList",
+			Name: "TestList1",
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_WANTED},
 				&pb.WantListEntry{Index: 2, Want: 125},
@@ -180,7 +210,8 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 	})
 
 	// Blank update does a prod procss
-	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1234})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1234})
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
@@ -193,7 +224,6 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 
 func TestUpdateWant(t *testing.T) {
 	s := InitTestServer()
-	s.rcBridge = &testRcBridge{fail: true}
 
 	err := s.updateWant(context.Background(), &pb.WantListEntry{Status: pb.WantListEntry_WANTED}, &pb.WantList{})
 	if err != nil {

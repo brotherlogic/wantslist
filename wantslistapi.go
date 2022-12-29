@@ -128,7 +128,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 		return nil, err
 	}
 
-	r, err := s.rcBridge.getSpRecord(ctx, req.GetInstanceId())
+	res, err := s.rcclient.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: req.GetInstanceId()})
 	if err != nil {
 		s.CtxLog(ctx, fmt.Sprintf("Unable to locate %v -> %v", req.GetInstanceId(), err))
 		// Don't process a deleted record
@@ -137,6 +137,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 		}
 		return nil, err
 	}
+	r := res.GetRecord()
 
 	for _, list := range config.GetLists() {
 		for _, want := range list.GetWants() {
