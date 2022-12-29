@@ -149,7 +149,8 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 					if (list.GetType() == pb.WantList_ALL_IN || list.GetType() == pb.WantList_RAPID) &&
 						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_STAGED ||
 						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_HIGH_SCHOOL ||
-						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_HIGH_SCHOOL {
+						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_HIGH_SCHOOL ||
+						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_IN_COLLECTION {
 						want.Status = pb.WantListEntry_COMPLETE
 						return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
 					}
