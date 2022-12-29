@@ -25,7 +25,7 @@ var (
 		Help: "The number of outstanding wants",
 	})
 	newest = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "wantslist_oldest_cost",
+		Name: "wantslist_newest_cost",
 		Help: "The number of outstanding wants",
 	})
 )
