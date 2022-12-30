@@ -114,7 +114,7 @@ func main() {
 		case "RAPID":
 			list.Type = pb.WantList_RAPID
 		case "YEARLY":
-			list.Type = pb.Wantlist_YEARLY
+			list.Type = pb.WantList_YEARLY
 		default:
 			log.Fatalf("%v is an unknown speed", bits[1])
 		}
