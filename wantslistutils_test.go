@@ -5,13 +5,14 @@ import (
 	"testing"
 	"time"
 
-	keystoreclient "github.com/brotherlogic/keystore/client"
-	pbrw "github.com/brotherlogic/recordwants/proto"
 	"golang.org/x/net/context"
 
 	pbgd "github.com/brotherlogic/godiscogs"
+	keystoreclient "github.com/brotherlogic/keystore/client"
+	rbc "github.com/brotherlogic/recordbudget/client"
 	rcc "github.com/brotherlogic/recordcollection/client"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
@@ -64,6 +65,7 @@ func InitTestServer() *Server {
 	s.GoServer.KSclient.Save(context.Background(), KEY, &pb.Config{})
 	s.wantBridge = &testWantBridge{}
 	s.rcclient = &rcc.RecordCollectionClient{Test: true}
+	s.budgetClient = &rbc.RecordBudgetClient{Test: true}
 
 	return s
 }

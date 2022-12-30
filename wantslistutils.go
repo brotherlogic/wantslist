@@ -6,13 +6,14 @@ import (
 	"sort"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"golang.org/x/net/context"
 
+	rbpb "github.com/brotherlogic/recordbudget/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
 	pb "github.com/brotherlogic/wantslist/proto"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 var (
@@ -146,6 +147,26 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 	defer s.CtxLog(ctx, "Complete processing")
 	for _, list := range config.Lists {
 		s.updateCosts(ctx, list)
+
+		//
+		budget, err := s.budgetClient.GetBudget(ctx, &rbpb.GetBudgetRequest{Budget: list.GetBudget()})
+		if err != nil {
+			return err
+		}
+		if budget.GetChosenBudget().GetRemaining() <= 0 {
+			for _, w := range list.GetWants() {
+				if w.Status == pb.WantListEntry_WANTED {
+					w.Status = pb.WantListEntry_UNPROCESSED
+					err := s.updateWant(ctx, w, list)
+					if err != nil {
+						return err
+					}
+				}
+			}
+
+			continue
+		}
+
 		sort.SliceStable(list.Wants, func(i2, j2 int) bool {
 			return list.Wants[i2].Index < list.Wants[j2].Index
 		})
