@@ -16,6 +16,7 @@ import (
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	"github.com/brotherlogic/goserver/utils"
+	rbc "github.com/brotherlogic/recordbudget/client"
 	rcc "github.com/brotherlogic/recordcollection/client"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
@@ -96,9 +97,10 @@ func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, e
 // Server main server type
 type Server struct {
 	*goserver.GoServer
-	wantBridge wantBridge
-	lastRun    time.Time
-	rcclient   *rcc.RecordCollectionClient
+	wantBridge   wantBridge
+	lastRun      time.Time
+	rcclient     *rcc.RecordCollectionClient
+	budgetClient *rbc.RecordBudgetClient
 }
 
 // Init builds the server
@@ -110,6 +112,7 @@ func Init() *Server {
 	}
 	s.wantBridge = &prodWantBridge{dial: s.FDialServer}
 	s.rcclient = &rcc.RecordCollectionClient{Gs: s.GoServer}
+	s.budgetClient = &rbc.RecordBudgetClient{Gs: s.GoServer}
 	return s
 }
 
