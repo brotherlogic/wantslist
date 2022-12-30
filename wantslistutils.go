@@ -154,6 +154,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 			return err
 		}
 		if budget.GetChosenBudget().GetRemaining() <= 0 {
+			s.CtxLog(ctx, fmt.Sprintf("Unwanting %v becuase budget %v has no money in it", list.GetName(), list.GetBudget()))
 			for _, w := range list.GetWants() {
 				if w.Status == pb.WantListEntry_WANTED {
 					w.Status = pb.WantListEntry_UNPROCESSED

@@ -10,6 +10,7 @@ import (
 	pbgd "github.com/brotherlogic/godiscogs"
 	keystoreclient "github.com/brotherlogic/keystore/client"
 	rbc "github.com/brotherlogic/recordbudget/client"
+	rbpb "github.com/brotherlogic/recordbudget/proto"
 	rcc "github.com/brotherlogic/recordcollection/client"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pbrw "github.com/brotherlogic/recordwants/proto"
@@ -67,6 +68,8 @@ func InitTestServer() *Server {
 	s.rcclient = &rcc.RecordCollectionClient{Test: true}
 	s.budgetClient = &rbc.RecordBudgetClient{Test: true}
 
+	s.budgetClient.AddBudget(&rbpb.Budget{Name: "basic", Remaining: 10})
+
 	return s
 }
 
@@ -75,8 +78,9 @@ func TestAddFail(t *testing.T) {
 	s.GoServer.KSclient.Fail = true
 	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
-			Name: "TestList",
-			Year: int32(time.Now().Year()),
+			Name:   "TestList",
+			Budget: "basic",
+			Year:   int32(time.Now().Year()),
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123},
 				&pb.WantListEntry{Index: 2, Want: 125},
@@ -93,8 +97,9 @@ func TestGetCosts(t *testing.T) {
 	s := InitTestServer()
 	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
-			Name: "TestList",
-			Year: int32(time.Now().Year()),
+			Name:   "TestList",
+			Budget: "basic",
+			Year:   int32(time.Now().Year()),
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123},
 				&pb.WantListEntry{Index: 2, Want: 125},
@@ -122,8 +127,9 @@ func TestFirstEntrySet(t *testing.T) {
 	s := InitTestServer()
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
-			Name: "TestList",
-			Year: int32(time.Now().Year()),
+			Name:   "TestList",
+			Budget: "basic",
+			Year:   int32(time.Now().Year()),
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123},
 				&pb.WantListEntry{Index: 2, Want: 125},
@@ -146,7 +152,8 @@ func TestFirstEntryUpdated(t *testing.T) {
 	s := InitTestServer()
 	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
-			Name: "TestList",
+			Name:   "TestList",
+			Budget: "basic",
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_COMPLETE},
 				&pb.WantListEntry{Index: 2, Want: 125},
@@ -178,7 +185,8 @@ func TestFirstEntryUpdatedToCollection(t *testing.T) {
 	s := InitTestServer()
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
-			Name: "TestList",
+			Name:   "TestList",
+			Budget: "basic",
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_WANTED},
 				&pb.WantListEntry{Index: 2, Want: 125},
@@ -203,7 +211,8 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123, InstanceId: 1234}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}})
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
 		Add: &pb.WantList{
-			Name: "TestList1",
+			Name:   "TestList1",
+			Budget: "basic",
 			Wants: []*pb.WantListEntry{
 				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_WANTED},
 				&pb.WantListEntry{Index: 2, Want: 125},
