@@ -215,7 +215,7 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 
 	lists, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{})
 	if err != nil {
-		t.Fatalf("Error getting wants: %v", err)
+		t.Fatalf("error getting wants: %v", err)
 	}
 	if lists.Lists[0].Wants[0].Status != pb.WantListEntry_COMPLETE {
 		t.Errorf("want has not been updated to complete: %v", lists.Lists[0].Wants[0])
