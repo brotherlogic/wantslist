@@ -218,7 +218,7 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 		t.Fatalf("Error getting wants: %v", err)
 	}
 	if lists.Lists[0].Wants[0].Status != pb.WantListEntry_COMPLETE {
-		t.Errorf("Want has not been updated to complete: %v", lists.Lists[0].Wants[0])
+		t.Errorf("want has not been updated to complete: %v", lists.Lists[0].Wants[0])
 	}
 }
 
