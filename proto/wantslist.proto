@@ -34,8 +34,9 @@ message WantList {
 
   enum WantlistType {
     STANDARD = 0;
-    RAPID = 1;
+    RAPID = 1; // Same as STANDARD
     ALL_IN = 2;
+    YEARLY = 3;
   }
   WantlistType type = 5;
   int64 time_added = 6;
