@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"golang.org/x/net/context"
@@ -93,7 +92,6 @@ func (s *Server) GetWantList(ctx context.Context, req *pb.GetWantListRequest) (*
 	}
 
 	var lists []*pb.WantList
-	log.Printf("HUH: %v", config.Lists)
 	for _, l := range config.Lists {
 		if req.GetName() == "" || req.GetName() == l.GetName() {
 			lists = append(lists, l)

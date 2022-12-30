@@ -241,3 +241,51 @@ func TestUpdateWant(t *testing.T) {
 		t.Errorf("Bad update did not fail")
 	}
 }
+
+func TestBudgetUpdate(t *testing.T) {
+	s := InitTestServer()
+	s.AddWantList(context.Background(), &pb.AddWantListRequest{
+		Add: &pb.WantList{
+			Name:   "TestListBudget",
+			Budget: "basic",
+			Type:   pb.WantList_ALL_IN,
+			Wants: []*pb.WantListEntry{
+				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_WANTED},
+				&pb.WantListEntry{Index: 2, Want: 125},
+			},
+		},
+	})
+
+	s.lastRun = time.Now().Add(-time.Hour * 24)
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+
+	wl, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
+	if err != nil {
+		t.Errorf("Bad get: %v", err)
+	}
+
+	for _, list := range wl.GetLists() {
+		for _, entry := range list.GetWants() {
+			if entry.GetStatus() != pb.WantListEntry_WANTED {
+				t.Fatalf("Should be unprocessed: %v", entry)
+			}
+		}
+	}
+
+	s.budgetClient.AddBudget(&rbpb.Budget{Name: "basic", Remaining: 0})
+	s.lastRun = time.Now().Add(-time.Hour * 24)
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+
+	wl, err = s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
+	if err != nil {
+		t.Errorf("Bad get: %v", err)
+	}
+
+	for _, list := range wl.GetLists() {
+		for _, entry := range list.GetWants() {
+			if entry.GetStatus() != pb.WantListEntry_UNPROCESSED {
+				t.Errorf("Should be unprocessed: %v", entry)
+			}
+		}
+	}
+}
