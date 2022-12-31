@@ -53,7 +53,9 @@ func recordMetrics(config *pb.Config) {
 				active++
 			}
 		}
-		activeMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(active))
+		if active > 0 {
+			activeMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(active))
+		}
 		togoMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(togo))
 		costMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(remaining))
 	}
