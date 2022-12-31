@@ -40,7 +40,7 @@ func recordMetrics(config *pb.Config) {
 		togo := 0
 		remaining := 0
 		for _, entry := range list.GetWants() {
-			if entry.Status == pb.WantListEntry_WANTED {
+			if entry.Status == pb.WantListEntry_WANTED || entry.Status == pb.WantListEntry_UNPROCESSED {
 				togo++
 				remaining += int(entry.GetEstimatedCost())
 			}
