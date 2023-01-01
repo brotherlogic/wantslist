@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -43,7 +44,7 @@ func main() {
 	case "get":
 		var lists *pb.GetWantListResponse
 		var err error
-		if len(os.Args) > 1 {
+		if len(os.Args) > 2 {
 			lists, err = client.GetWantList(ctx, &pb.GetWantListRequest{Name: os.Args[2]})
 		} else {
 			lists, err = client.GetWantList(ctx, &pb.GetWantListRequest{})
@@ -122,6 +123,8 @@ func main() {
 		switch bits[2] {
 		case "year":
 			list.RetireTime = time.Date(time.Now().Year()+1, time.Month(1), 1, 0, 0, 0, 0, time.Local).Unix()
+		case "never":
+			list.RetireTime = math.MaxInt64
 		default:
 			log.Fatalf("%v is an unknown runtime", bits[2])
 		}
