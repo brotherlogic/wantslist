@@ -62,14 +62,6 @@ func recordMetrics(config *pb.Config) {
 }
 
 func (s *Server) prodProcess(ctx context.Context, config *pb.Config) error {
-	s.CtxLog(ctx, fmt.Sprintf("Running pproc: %v", time.Since(s.lastRun)))
-	if time.Since(s.lastRun) < time.Hour {
-		for _, list := range config.GetLists() {
-			s.updateCosts(ctx, list)
-		}
-		return s.save(ctx, config)
-	}
-	s.lastRun = time.Now()
 	return s.processWantLists(ctx, config)
 }
 
