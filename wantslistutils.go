@@ -221,6 +221,17 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 		case pb.WantList_YEARLY:
 			days := 365 / len(list.GetWants())
 			for i, entry := range list.GetWants() {
+				want, err := s.wantBridge.get(ctx, entry.GetWant())
+				if err != nil {
+					return err
+				}
+
+				if want.GetCurrentState() == pbrw.MasterWant_WANTED && entry.GetStatus() != pb.WantListEntry_WANTED {
+					s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
+				} else if want.GetCurrentState() != pbrw.MasterWant_WANTED && entry.GetStatus() == pb.WantListEntry_WANTED {
+					s.wantBridge.want(ctx, entry.GetWant(), list.GetRetireTime(), list.GetBudget())
+				}
+
 				if time.Now().YearDay() > days*i {
 					if entry.Status == pb.WantListEntry_UNPROCESSED {
 						entry.Status = pb.WantListEntry_WANTED
