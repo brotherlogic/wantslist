@@ -144,10 +144,6 @@ func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
 	return nil
 }
 
-func (s *Server) updateWant(ctx context.Context, w *pb.WantListEntry, list *pb.WantList) error {
-	return s.wantBridge.want(ctx, w.GetWant(), list.GetRetireTime(), list.GetBudget())
-}
-
 func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error {
 	defer s.CtxLog(ctx, "Complete processing")
 	for _, list := range config.Lists {
@@ -163,10 +159,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 			for _, w := range list.GetWants() {
 				if w.Status == pb.WantListEntry_WANTED {
 					w.Status = pb.WantListEntry_UNPROCESSED
-					err := s.updateWant(ctx, w, list)
-					if err != nil {
-						return err
-					}
 				}
 			}
 
@@ -188,10 +180,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 			for _, w := range list.GetWants() {
 				if w.Status == pb.WantListEntry_WANTED {
 					w.Status = pb.WantListEntry_UNPROCESSED
-					err := s.updateWant(ctx, w, list)
-					if err != nil {
-						return err
-					}
 				}
 			}
 			continue
@@ -219,10 +207,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 
 				if w.Status == pb.WantListEntry_UNPROCESSED {
 					w.Status = pb.WantListEntry_WANTED
-					err := s.updateWant(ctx, w, list)
-					if err != nil {
-						return err
-					}
 				}
 			}
 		case pb.WantList_STANDARD, pb.WantList_RAPID:
@@ -230,10 +214,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 			for _, entry := range list.GetWants() {
 				if entry.GetStatus() == pb.WantListEntry_UNPROCESSED && prior == pb.WantListEntry_COMPLETE {
 					entry.Status = pb.WantListEntry_WANTED
-					err := s.updateWant(ctx, entry, list)
-					if err != nil {
-						return err
-					}
 					break
 				}
 			}
@@ -258,10 +238,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 				if time.Now().YearDay() > days*i {
 					if entry.Status == pb.WantListEntry_UNPROCESSED {
 						entry.Status = pb.WantListEntry_WANTED
-						err := s.updateWant(ctx, entry, list)
-						if err != nil {
-							return err
-						}
 					}
 				}
 			}
