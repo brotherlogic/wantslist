@@ -35,7 +35,38 @@ func (s *Server) AddWantListItem(ctx context.Context, req *pb.AddWantListItemReq
 }
 
 func (s *Server) AmendWantListItem(ctx context.Context, req *pb.AmendWantListItemRequest) (*pb.AmendWantListItemResponse, error) {
-	return &pb.AmendWantListItemResponse{}, nil
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, list := range config.GetLists() {
+		if list.GetName() == req.GetName() {
+			changed := false
+			for _, entry := range list.GetWants() {
+				// Unwant the old
+				if entry.GetWant() == req.GetOldId() && entry.GetStatus() == pb.WantListEntry_WANTED {
+					err := s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
+					if err != nil {
+						return nil, err
+					}
+				}
+
+				// Reset
+				entry.Want = req.NewId
+				entry.Status = pb.WantListEntry_UNPROCESSED
+				changed = true
+			}
+
+			if !changed {
+				return nil, status.Errorf(codes.NotFound, "%v was not found in %v", req.OldId, req.Name)
+			}
+
+			return &pb.AmendWantListItemResponse{}, s.save(ctx, config)
+		}
+	}
+
+	return nil, status.Errorf(codes.NotFound, fmt.Sprintf("%v was not found", req.GetName()))
 }
 
 func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListItemRequest) (*pb.DeleteWantListItemResponse, error) {
