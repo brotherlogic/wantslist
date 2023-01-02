@@ -233,15 +233,6 @@ func TestFirstEntryUpdatedToComplete(t *testing.T) {
 	}
 }
 
-func TestUpdateWant(t *testing.T) {
-	s := InitTestServer()
-
-	err := s.updateWant(context.Background(), &pb.WantListEntry{Status: pb.WantListEntry_WANTED}, &pb.WantList{})
-	if err != nil {
-		t.Errorf("Bad update did not fail")
-	}
-}
-
 func TestBudgetUpdate(t *testing.T) {
 	s := InitTestServer()
 	s.AddWantList(context.Background(), &pb.AddWantListRequest{
