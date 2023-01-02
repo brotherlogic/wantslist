@@ -200,7 +200,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 		switch list.GetType() {
 		case pb.WantList_ALL_IN:
 			for _, w := range list.GetWants() {
-				want, err := s.wantBridge.get(ctx, entry.GetWant())
+				want, err := s.wantBridge.get(ctx, w.GetWant())
 				if err != nil && status.Code(err) != codes.NotFound {
 					return err
 				}
