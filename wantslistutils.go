@@ -192,18 +192,17 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 				if err != nil && status.Code(err) != codes.NotFound {
 					return err
 				}
-)
+
 				if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && w.GetStatus() != pb.WantListEntry_WANTED {
 					s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget())
 				} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && w.GetStatus() == pb.WantListEntry_WANTED {
 					s.wantBridge.want(ctx, w.GetWant(), list.GetRetireTime(), list.GetBudget())
 				}
 
-				_, err := s.getRecord(ctx, w.GetWant())
+				_, err = s.getRecord(ctx, w.GetWant())
 				if err == nil || status.Code(err) != codes.NotFound {
 					w.Status = pb.WantListEntry_COMPLETE
 				}
-
 
 				if w.Status == pb.WantListEntry_UNPROCESSED {
 					w.Status = pb.WantListEntry_WANTED
@@ -230,7 +229,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 					s.wantBridge.want(ctx, entry.GetWant(), list.GetRetireTime(), list.GetBudget())
 				}
 
-				_, err := s.getRecord(ctx, entry.GetWant())
+				_, err = s.getRecord(ctx, entry.GetWant())
 				if err == nil || status.Code(err) != codes.NotFound {
 					entry.Status = pb.WantListEntry_COMPLETE
 				}
