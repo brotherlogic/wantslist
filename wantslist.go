@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"time"
@@ -95,7 +94,7 @@ func (p *prodWantBridge) get(ctx context.Context, id int32) (*pbrw.MasterWant, e
 	}
 
 	if len(want.GetWant()) == 0 {
-		return nil, fmt.Errorf("Cannot find wants for %v", id)
+		return nil, status.Errorf(codes.NotFound, "Cannot find wants for %v", id)
 	}
 
 	return want.GetWant()[0], err
