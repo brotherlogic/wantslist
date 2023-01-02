@@ -239,22 +239,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 }
 
 func (s *Server) cleanWantlists(ctx context.Context, config *pb.Config) *pb.Config {
-	i := 0
-	for _, list := range config.Lists {
-		count := 0
-		for _, elem := range list.Wants {
-			if elem.Status == pb.WantListEntry_COMPLETE {
-				count++
-			}
-		}
-
-		if len(list.Wants) != count {
-			config.Lists[i] = list
-			i++
-		}
-	}
-	config.Lists = config.Lists[:i]
-
 	newwantlists := []*pb.WantList{}
 	for _, list := range config.Lists {
 		if int32(time.Now().Year()) == list.GetYear() {
