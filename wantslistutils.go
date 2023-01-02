@@ -81,7 +81,7 @@ func (s *Server) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) 
 		return rec.GetRecord(), err
 	}
 
-	return nil, fmt.Errorf("Cannot locate %v", id)
+	return nil, status.Errorf(codes.NotFound, "Cannot locate %v", id)
 }
 func (s *Server) updateWantOld(ctx context.Context, v *pb.WantListEntry, list *pb.WantList) error {
 	if v.Status == pb.WantListEntry_WANTED {
@@ -199,6 +199,11 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 					s.wantBridge.want(ctx, w.GetWant(), list.GetRetireTime(), list.GetBudget())
 				}
 
+				_, err = s.getRecord(ctx, w.GetWant())
+				if err == nil || status.Code(err) != codes.NotFound {
+					w.Status = pb.WantListEntry_COMPLETE
+				}
+
 				if w.Status == pb.WantListEntry_UNPROCESSED {
 					w.Status = pb.WantListEntry_WANTED
 				}
@@ -218,11 +223,15 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 				if err != nil && status.Code(err) != codes.NotFound {
 					return err
 				}
-
 				if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && entry.GetStatus() != pb.WantListEntry_WANTED {
 					s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
 				} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && entry.GetStatus() == pb.WantListEntry_WANTED {
 					s.wantBridge.want(ctx, entry.GetWant(), list.GetRetireTime(), list.GetBudget())
+				}
+
+				_, err = s.getRecord(ctx, entry.GetWant())
+				if err == nil || status.Code(err) != codes.NotFound {
+					entry.Status = pb.WantListEntry_COMPLETE
 				}
 
 				if time.Now().YearDay() > days*i {
