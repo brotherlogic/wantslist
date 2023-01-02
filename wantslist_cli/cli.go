@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"math"
@@ -29,6 +30,23 @@ func main() {
 	client := pb.NewWantServiceClient(conn)
 
 	switch os.Args[1] {
+	case "amend":
+		amendFlags := flag.NewFlagSet("amend", flag.ExitOnError)
+		var name = amendFlags.String("name", "", "The name of the budget")
+		var old = amendFlags.Int("old", -1, "value")
+		var new = amendFlags.Int("new", -1, "Amount")
+		if err := amendFlags.Parse(os.Args[2:]); err == nil {
+			_, err := client.AmendWantListItem(ctx, &pb.AmendWantListItemRequest{
+				Name:  *name,
+				OldId: int32(*old),
+				NewId: int32(*new),
+			})
+
+			if err != nil {
+				log.Fatalf("Bad amend: %v", err)
+			}
+		}
+
 	case "ping":
 		num, err := strconv.ParseInt(os.Args[2], 10, 32)
 		if err != nil {

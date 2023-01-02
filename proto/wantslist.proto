@@ -78,10 +78,21 @@ message DeleteWantlistRequest {
 }
 message DeleteWantlistResponse {}
 
+message AmendWantListItemRequest {
+  string name = 1;
+  int32 old_id = 2;
+  int32 new_id = 3;
+}
+
+message AmendWantListItemResponse {
+  
+}
+
 service WantService {
   rpc DeleteWantListItem(DeleteWantListItemRequest) returns (DeleteWantListItemResponse) {};
   rpc AddWantListItem(AddWantListItemRequest) returns (AddWantListItemResponse) {};
   rpc AddWantList(AddWantListRequest) returns (AddWantListResponse) {};
   rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
   rpc DeleteWantList(DeleteWantlistRequest) returns (DeleteWantlistResponse) {};
+  rpc AmendWantListItem(AmendWantListItemRequest) returns (AmendWantListItemResponse){};
 }

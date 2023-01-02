@@ -22,6 +22,7 @@ type WantServiceClient interface {
 	AddWantList(ctx context.Context, in *AddWantListRequest, opts ...grpc.CallOption) (*AddWantListResponse, error)
 	GetWantList(ctx context.Context, in *GetWantListRequest, opts ...grpc.CallOption) (*GetWantListResponse, error)
 	DeleteWantList(ctx context.Context, in *DeleteWantlistRequest, opts ...grpc.CallOption) (*DeleteWantlistResponse, error)
+	AmendWantListItem(ctx context.Context, in *AmendWantListItemRequest, opts ...grpc.CallOption) (*AmendWantListItemResponse, error)
 }
 
 type wantServiceClient struct {
@@ -77,6 +78,15 @@ func (c *wantServiceClient) DeleteWantList(ctx context.Context, in *DeleteWantli
 	return out, nil
 }
 
+func (c *wantServiceClient) AmendWantListItem(ctx context.Context, in *AmendWantListItemRequest, opts ...grpc.CallOption) (*AmendWantListItemResponse, error) {
+	out := new(AmendWantListItemResponse)
+	err := c.cc.Invoke(ctx, "/wantslist.WantService/AmendWantListItem", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WantServiceServer is the server API for WantService service.
 // All implementations should embed UnimplementedWantServiceServer
 // for forward compatibility
@@ -86,6 +96,7 @@ type WantServiceServer interface {
 	AddWantList(context.Context, *AddWantListRequest) (*AddWantListResponse, error)
 	GetWantList(context.Context, *GetWantListRequest) (*GetWantListResponse, error)
 	DeleteWantList(context.Context, *DeleteWantlistRequest) (*DeleteWantlistResponse, error)
+	AmendWantListItem(context.Context, *AmendWantListItemRequest) (*AmendWantListItemResponse, error)
 }
 
 // UnimplementedWantServiceServer should be embedded to have forward compatible implementations.
@@ -106,6 +117,9 @@ func (UnimplementedWantServiceServer) GetWantList(context.Context, *GetWantListR
 }
 func (UnimplementedWantServiceServer) DeleteWantList(context.Context, *DeleteWantlistRequest) (*DeleteWantlistResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteWantList not implemented")
+}
+func (UnimplementedWantServiceServer) AmendWantListItem(context.Context, *AmendWantListItemRequest) (*AmendWantListItemResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AmendWantListItem not implemented")
 }
 
 // UnsafeWantServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -209,6 +223,24 @@ func _WantService_DeleteWantList_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WantService_AmendWantListItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AmendWantListItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WantServiceServer).AmendWantListItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/wantslist.WantService/AmendWantListItem",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WantServiceServer).AmendWantListItem(ctx, req.(*AmendWantListItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _WantService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "wantslist.WantService",
 	HandlerType: (*WantServiceServer)(nil),
@@ -232,6 +264,10 @@ var _WantService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteWantList",
 			Handler:    _WantService_DeleteWantList_Handler,
+		},
+		{
+			MethodName: "AmendWantListItem",
+			Handler:    _WantService_AmendWantListItem_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
