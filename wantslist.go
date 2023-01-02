@@ -142,25 +142,6 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 
 	config = data.(*pb.Config)
 
-	for _, list := range config.GetLists() {
-		if list.GetName() == "digital" {
-			list.Type = pb.WantList_ALL_IN
-			list.Budget = "digital"
-		}
-		if list.GetName() == "digital_quick" {
-			list.Type = pb.WantList_ALL_IN
-			list.Budget = "digital_keep"
-		}
-		if list.GetName() == "The Fall" {
-			list.Type = pb.WantList_RAPID
-			for _, elem := range list.GetWants() {
-				if elem.GetWant() == 143755 {
-					elem.Want = 1437557
-				}
-			}
-		}
-	}
-
 	recordMetrics(config)
 
 	return config, nil
