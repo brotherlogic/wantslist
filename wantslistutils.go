@@ -200,6 +200,17 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 		switch list.GetType() {
 		case pb.WantList_ALL_IN:
 			for _, w := range list.GetWants() {
+				want, err := s.wantBridge.get(ctx, w.GetWant())
+				if err != nil && status.Code(err) != codes.NotFound {
+					return err
+				}
+
+				if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && w.GetStatus() != pb.WantListEntry_WANTED {
+					s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget())
+				} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && w.GetStatus() == pb.WantListEntry_WANTED {
+					s.wantBridge.want(ctx, w.GetWant(), list.GetRetireTime(), list.GetBudget())
+				}
+
 				if w.Status == pb.WantListEntry_UNPROCESSED {
 					w.Status = pb.WantListEntry_WANTED
 					err := s.updateWant(ctx, w, list)
