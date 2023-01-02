@@ -9,6 +9,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	rbpb "github.com/brotherlogic/recordbudget/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
@@ -222,13 +224,13 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 			days := 365 / len(list.GetWants())
 			for i, entry := range list.GetWants() {
 				want, err := s.wantBridge.get(ctx, entry.GetWant())
-				if err != nil {
+				if err != nil && status.Code(err) != codes.NotFound {
 					return err
 				}
 
-				if want.GetCurrentState() == pbrw.MasterWant_WANTED && entry.GetStatus() != pb.WantListEntry_WANTED {
+				if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && entry.GetStatus() != pb.WantListEntry_WANTED {
 					s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
-				} else if want.GetCurrentState() != pbrw.MasterWant_WANTED && entry.GetStatus() == pb.WantListEntry_WANTED {
+				} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && entry.GetStatus() == pb.WantListEntry_WANTED {
 					s.wantBridge.want(ctx, entry.GetWant(), list.GetRetireTime(), list.GetBudget())
 				}
 
