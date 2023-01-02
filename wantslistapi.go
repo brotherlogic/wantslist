@@ -34,6 +34,10 @@ func (s *Server) AddWantListItem(ctx context.Context, req *pb.AddWantListItemReq
 	return nil, fmt.Errorf("Cannot find list: %v", req.GetListName())
 }
 
+func (s *Server) AmendWantListItem(ctx context.Context, req *pb.AmendWantListItemRequest) (*pb.AmendWantListItemResponse, error) {
+	return &pb.AmendWantListItemResponse{}, nil
+}
+
 func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListItemRequest) (*pb.DeleteWantListItemResponse, error) {
 	config, err := s.load(ctx)
 	if err != nil {

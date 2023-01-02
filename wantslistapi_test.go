@@ -34,6 +34,41 @@ func TestGetWantsListFail(t *testing.T) {
 
 }
 
+func TestAmendWantList(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
+		Add: &pb.WantList{
+			Name:   "Testing",
+			Budget: "test",
+			Wants: []*pb.WantListEntry{
+				{Want: 123},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("Bad wantlist add: %v", err)
+	}
+
+	_, err = s.AmendWantListItem(context.Background(), &pb.AmendWantListItemRequest{
+		Name:  "Testing",
+		OldId: 123,
+		NewId: 124,
+	})
+	if err != nil {
+		t.Fatalf("Bad wantlist amend: %v", err)
+	}
+
+	list, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "Testing"})
+	if err != nil {
+		t.Fatalf("Bad wantlist retrieve: %v", err)
+	}
+
+	if len(list.GetLists()) != 1 || len(list.GetLists()[0].GetWants()) != 1 || list.GetLists()[0].GetWants()[0].Want != 124 {
+		t.Errorf("List update failure: %v", list)
+	}
+}
+
 func TestWantsListAddFail(t *testing.T) {
 	s := InitTestServer()
 
