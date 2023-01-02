@@ -4,6 +4,7 @@ import (
 	"flag"
 	"io/ioutil"
 	"log"
+	"math"
 	"time"
 
 	"github.com/brotherlogic/goserver"
@@ -147,6 +148,12 @@ func (s *Server) load(ctx context.Context) (*pb.Config, error) {
 	}
 
 	config = data.(*pb.Config)
+
+	for _, want := range config.GetLists() {
+		if want.GetRetireTime() > math.MaxInt32 {
+			want.RetireTime = math.MaxInt32
+		}
+	}
 
 	recordMetrics(config)
 
