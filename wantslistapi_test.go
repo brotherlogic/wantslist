@@ -43,6 +43,7 @@ func TestAmendWantList(t *testing.T) {
 			Budget: "test",
 			Wants: []*pb.WantListEntry{
 				{Want: 123},
+				{Want: 456},
 			},
 		},
 	})
@@ -64,8 +65,21 @@ func TestAmendWantList(t *testing.T) {
 		t.Fatalf("Bad wantlist retrieve: %v", err)
 	}
 
-	if len(list.GetLists()) != 1 || len(list.GetLists()[0].GetWants()) != 1 || list.GetLists()[0].GetWants()[0].Want != 124 {
+	if len(list.GetLists()) != 1 || len(list.GetLists()[0].GetWants()) != 2 || list.GetLists()[0].GetWants()[0].Want != 124 {
 		t.Errorf("List update failure: %v", list)
+	}
+
+	found := false
+	for _, list := range list.GetLists() {
+		for _, entry := range list.GetWants() {
+			if entry.Want == 456 {
+				found = true
+			}
+		}
+	}
+
+	if !found {
+		t.Errorf("More amendment than expected: %v", list)
 	}
 }
 
