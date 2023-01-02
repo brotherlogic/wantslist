@@ -45,17 +45,19 @@ func (s *Server) AmendWantListItem(ctx context.Context, req *pb.AmendWantListIte
 			changed := false
 			for _, entry := range list.GetWants() {
 				// Unwant the old
-				if entry.GetWant() == req.GetOldId() && entry.GetStatus() == pb.WantListEntry_WANTED {
-					err := s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
-					if err != nil {
-						return nil, err
+				if entry.GetWant() == req.GetOldId() {
+					if entry.GetStatus() == pb.WantListEntry_WANTED {
+						err := s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
+						if err != nil {
+							return nil, err
+						}
 					}
-				}
 
-				// Reset
-				entry.Want = req.NewId
-				entry.Status = pb.WantListEntry_UNPROCESSED
-				changed = true
+					// Reset
+					entry.Want = req.NewId
+					entry.Status = pb.WantListEntry_UNPROCESSED
+					changed = true
+				}
 			}
 
 			if !changed {
