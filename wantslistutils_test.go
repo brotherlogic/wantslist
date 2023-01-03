@@ -304,6 +304,9 @@ func TestBoughtRecordIsMarkedComplete(t *testing.T) {
 
 	mapper := make(map[int]pb.WantListEntry_Status)
 	wl, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
+	if err != nil {
+		t.Fatalf("Bad list get: %v", err)
+	}
 	for _, list := range wl.GetLists() {
 		for _, entry := range list.GetWants() {
 			mapper[int(entry.GetWant())] = entry.GetStatus()
