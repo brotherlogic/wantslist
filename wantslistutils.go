@@ -230,8 +230,10 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 				}
 
 				_, err = s.getRecord(ctx, entry.GetWant())
-				if err == nil || status.Code(err) != codes.NotFound {
+				if err == nil {
 					entry.Status = pb.WantListEntry_COMPLETE
+				} else if status.Code(err) == codes.NotFound && entry.GetStatus() == pb.WantListEntry_COMPLETE {
+					entry.Status = pb.WantListEntry_UNPROCESSED
 				}
 
 				if time.Now().YearDay() > days*i {
