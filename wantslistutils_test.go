@@ -280,3 +280,43 @@ func TestBudgetUpdate(t *testing.T) {
 		}
 	}
 }
+
+func TestBoughtRecordIsMarkedComplete(t *testing.T) {
+	s := InitTestServer()
+	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
+		Add: &pb.WantList{
+			Name:   "TestListBudget",
+			Budget: "basic",
+			Type:   pb.WantList_ALL_IN,
+			Wants: []*pb.WantListEntry{
+				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_WANTED},
+				&pb.WantListEntry{Index: 2, Want: 125, Status: pb.WantListEntry_WANTED},
+			},
+		},
+	})
+
+	if err != nil {
+		t.Fatalf("Bad add of wantlist: %v", err)
+	}
+
+	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123}})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+
+	mapper := make(map[int]pb.WantListEntry_Status)
+	wl, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
+	if err != nil {
+		t.Fatalf("Bad list get: %v", err)
+	}
+	for _, list := range wl.GetLists() {
+		for _, entry := range list.GetWants() {
+			mapper[int(entry.GetWant())] = entry.GetStatus()
+		}
+	}
+
+	if mapper[123] != pb.WantListEntry_LIMBO {
+		t.Errorf("Entry was not marked complete: %v", wl)
+	}
+	if mapper[125] != pb.WantListEntry_UNPROCESSED {
+		t.Errorf("Entry was not marked wanted: %v", wl)
+	}
+}
