@@ -186,66 +186,72 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 			continue
 		}
 
-		switch list.GetType() {
-		case pb.WantList_ALL_IN:
-			for _, w := range list.GetWants() {
-				want, err := s.wantBridge.get(ctx, w.GetWant())
-				if err != nil && status.Code(err) != codes.NotFound {
-					return err
-				}
+		isValidate := time.Since(time.Unix(list.GetLastValidate(), 0)) > time.Hour*24
 
-				if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && w.GetStatus() != pb.WantListEntry_WANTED {
-					s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget())
-				} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && w.GetStatus() == pb.WantListEntry_WANTED {
-					s.wantBridge.want(ctx, w.GetWant(), list.GetRetireTime(), list.GetBudget())
-				}
+		if isValidate {
+			switch list.GetType() {
+			case pb.WantList_ALL_IN:
+				for _, w := range list.GetWants() {
+					want, err := s.wantBridge.get(ctx, w.GetWant())
+					if err != nil && status.Code(err) != codes.NotFound {
+						return err
+					}
 
-				_, err = s.getRecord(ctx, w.GetWant())
-				if err == nil || status.Code(err) != codes.NotFound {
-					w.Status = pb.WantListEntry_COMPLETE
-				}
+					if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && w.GetStatus() != pb.WantListEntry_WANTED {
+						s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget())
+					} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && w.GetStatus() == pb.WantListEntry_WANTED {
+						s.wantBridge.want(ctx, w.GetWant(), list.GetRetireTime(), list.GetBudget())
+					}
 
-				if w.Status == pb.WantListEntry_UNPROCESSED {
-					w.Status = pb.WantListEntry_WANTED
-				}
-			}
-		case pb.WantList_STANDARD, pb.WantList_RAPID:
-			prior := pb.WantListEntry_COMPLETE
-			for _, entry := range list.GetWants() {
-				if entry.GetStatus() == pb.WantListEntry_UNPROCESSED && prior == pb.WantListEntry_COMPLETE {
-					entry.Status = pb.WantListEntry_WANTED
-					break
-				}
-			}
-		case pb.WantList_YEARLY:
-			days := 365 / len(list.GetWants())
-			for i, entry := range list.GetWants() {
-				want, err := s.wantBridge.get(ctx, entry.GetWant())
-				if err != nil && status.Code(err) != codes.NotFound {
-					return err
-				}
-				if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && entry.GetStatus() != pb.WantListEntry_WANTED {
-					s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
-				} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && entry.GetStatus() == pb.WantListEntry_WANTED {
-					s.wantBridge.want(ctx, entry.GetWant(), list.GetRetireTime(), list.GetBudget())
-				}
+					_, err = s.getRecord(ctx, w.GetWant())
+					if err == nil || status.Code(err) != codes.NotFound {
+						w.Status = pb.WantListEntry_COMPLETE
+					}
 
-				r, err := s.getRecord(ctx, entry.GetWant())
-				s.CtxLog(ctx, fmt.Sprintf("GOT record: %v -> %v (%v)", entry, err, r))
-
-				if err == nil {
-					entry.Status = pb.WantListEntry_COMPLETE
-				} else if status.Code(err) == codes.NotFound && entry.GetStatus() == pb.WantListEntry_COMPLETE {
-					entry.Status = pb.WantListEntry_UNPROCESSED
-				}
-
-				if time.Now().YearDay() > days*i {
-					if entry.Status == pb.WantListEntry_UNPROCESSED {
-						entry.Status = pb.WantListEntry_WANTED
+					if w.Status == pb.WantListEntry_UNPROCESSED {
+						w.Status = pb.WantListEntry_WANTED
 					}
 				}
-				log.Printf("Now %v", entry)
+			case pb.WantList_STANDARD, pb.WantList_RAPID:
+				prior := pb.WantListEntry_COMPLETE
+				for _, entry := range list.GetWants() {
+					if entry.GetStatus() == pb.WantListEntry_UNPROCESSED && prior == pb.WantListEntry_COMPLETE {
+						entry.Status = pb.WantListEntry_WANTED
+						break
+					}
+				}
+			case pb.WantList_YEARLY:
+				days := 365 / len(list.GetWants())
+				for i, entry := range list.GetWants() {
+					want, err := s.wantBridge.get(ctx, entry.GetWant())
+					if err != nil && status.Code(err) != codes.NotFound {
+						return err
+					}
+					if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && entry.GetStatus() != pb.WantListEntry_WANTED {
+						s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
+					} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && entry.GetStatus() == pb.WantListEntry_WANTED {
+						s.wantBridge.want(ctx, entry.GetWant(), list.GetRetireTime(), list.GetBudget())
+					}
+
+					r, err := s.getRecord(ctx, entry.GetWant())
+					s.CtxLog(ctx, fmt.Sprintf("GOT record: %v -> %v (%v)", entry, err, r))
+
+					if err == nil {
+						entry.Status = pb.WantListEntry_COMPLETE
+					} else if status.Code(err) == codes.NotFound && entry.GetStatus() == pb.WantListEntry_COMPLETE {
+						entry.Status = pb.WantListEntry_UNPROCESSED
+					}
+
+					if time.Now().YearDay() > days*i {
+						if entry.Status == pb.WantListEntry_UNPROCESSED {
+							entry.Status = pb.WantListEntry_WANTED
+						}
+					}
+					log.Printf("Now %v", entry)
+				}
 			}
+
+			list.LastValidate = time.Now().Unix()
 		}
 	}
 
