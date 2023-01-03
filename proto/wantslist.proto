@@ -43,6 +43,7 @@ message WantList {
   int64 retire_time = 7;
   string budget = 8;
   int32 overall_estimated_cost = 9;
+    int64 last_validate = 10;
 }
 
 message AddWantListItemRequest {
