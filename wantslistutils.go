@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"sort"
 	"time"
@@ -229,7 +230,9 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 					s.wantBridge.want(ctx, entry.GetWant(), list.GetRetireTime(), list.GetBudget())
 				}
 
-				_, err = s.getRecord(ctx, entry.GetWant())
+				r, err := s.getRecord(ctx, entry.GetWant())
+				s.CtxLog(ctx, fmt.Sprintf("GOT record: %v -> %v (%v)", entry, err, r))
+
 				if err == nil {
 					entry.Status = pb.WantListEntry_COMPLETE
 				} else if status.Code(err) == codes.NotFound && entry.GetStatus() == pb.WantListEntry_COMPLETE {
@@ -241,6 +244,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 						entry.Status = pb.WantListEntry_WANTED
 					}
 				}
+				log.Printf("Now %v", entry)
 			}
 		}
 	}

@@ -17,25 +17,6 @@ import (
 	pb "github.com/brotherlogic/wantslist/proto"
 )
 
-type testRcBridge struct {
-	returnComplete bool
-	fail           bool
-}
-
-func (t *testRcBridge) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
-	if t.fail {
-		return nil, fmt.Errorf("Built to fail")
-	}
-	if t.returnComplete {
-		return &pbrc.Record{Release: &pbgd.Release{Id: id}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}}, nil
-	}
-	return &pbrc.Record{Release: &pbgd.Release{Id: id}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED}}, nil
-}
-
-func (t *testRcBridge) getSpRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
-	return nil, nil
-}
-
 type testWantBridge struct {
 	fail bool
 }
@@ -287,10 +268,10 @@ func TestBoughtRecordIsMarkedComplete(t *testing.T) {
 		Add: &pb.WantList{
 			Name:   "TestListBudget",
 			Budget: "basic",
-			Type:   pb.WantList_ALL_IN,
+			Type:   pb.WantList_YEARLY,
 			Wants: []*pb.WantListEntry{
-				&pb.WantListEntry{Index: 1, Want: 123, Status: pb.WantListEntry_WANTED},
-				&pb.WantListEntry{Index: 2, Want: 125, Status: pb.WantListEntry_WANTED},
+				&pb.WantListEntry{Index: 1, Want: 1234, Status: pb.WantListEntry_WANTED},
+				&pb.WantListEntry{Index: 2, Want: 12345, Status: pb.WantListEntry_COMPLETE},
 			},
 		},
 	})
@@ -299,8 +280,9 @@ func TestBoughtRecordIsMarkedComplete(t *testing.T) {
 		t.Fatalf("Bad add of wantlist: %v", err)
 	}
 
-	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123}})
-	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 1234, InstanceId: 12}})
+	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 12345555, InstanceId: 1}})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1})
 
 	mapper := make(map[int]pb.WantListEntry_Status)
 	wl, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
@@ -313,10 +295,10 @@ func TestBoughtRecordIsMarkedComplete(t *testing.T) {
 		}
 	}
 
-	if mapper[123] != pb.WantListEntry_LIMBO {
-		t.Errorf("Entry was not marked complete: %v", wl)
+	if mapper[1234] == pb.WantListEntry_WANTED {
+		t.Errorf("Entry was not moved from complete: %v", wl)
 	}
-	if mapper[125] != pb.WantListEntry_UNPROCESSED {
+	if mapper[12345] != pb.WantListEntry_UNPROCESSED {
 		t.Errorf("Entry was not marked wanted: %v", wl)
 	}
 }
