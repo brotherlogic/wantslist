@@ -230,6 +230,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 				}
 
 				_, err = s.getRecord(ctx, entry.GetWant())
+				s.CtxLog(ctx, fmt.Sprintf("Got record: %v", err))
 				if err == nil || status.Code(err) != codes.NotFound {
 					entry.Status = pb.WantListEntry_COMPLETE
 				}
