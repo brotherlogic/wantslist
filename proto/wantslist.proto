@@ -89,6 +89,9 @@ message AmendWantListItemResponse {
   
 }
 
+message ForceUpdateRequest{}
+message ForceUpdateResponse{}
+
 service WantService {
   rpc DeleteWantListItem(DeleteWantListItemRequest) returns (DeleteWantListItemResponse) {};
   rpc AddWantListItem(AddWantListItemRequest) returns (AddWantListItemResponse) {};
@@ -96,4 +99,5 @@ service WantService {
   rpc GetWantList(GetWantListRequest) returns (GetWantListResponse) {};
   rpc DeleteWantList(DeleteWantlistRequest) returns (DeleteWantlistResponse) {};
   rpc AmendWantListItem(AmendWantListItemRequest) returns (AmendWantListItemResponse){};
+  rpc ForceUpdate(ForceUpdateRequest) returns (ForceUpdateResponse){};
 }

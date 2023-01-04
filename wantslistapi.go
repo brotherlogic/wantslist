@@ -71,6 +71,18 @@ func (s *Server) AmendWantListItem(ctx context.Context, req *pb.AmendWantListIte
 	return nil, status.Errorf(codes.NotFound, fmt.Sprintf("%v was not found", req.GetName()))
 }
 
+func (s *Server) ForceUpdate(ctx context.Context, req *pb.ForceUpdateRequest) (*pb.ForceUpdateResponse, error) {
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+	rerr := s.prodProcess(ctx, config, true)
+	if rerr != nil {
+		return nil, rerr
+	}
+	return &pb.ForceUpdateResponse{}, s.save(ctx, config)
+}
+
 func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListItemRequest) (*pb.DeleteWantListItemResponse, error) {
 	config, err := s.load(ctx)
 	if err != nil {
@@ -180,7 +192,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 				if want.GetStatus() == pb.WantListEntry_WANTED {
 					s.CtxLog(ctx, fmt.Sprintf("Marking %v from %v as LIMBO (%v)", want.Want, list.GetName(), r))
 					want.Status = pb.WantListEntry_LIMBO
-					return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
+					return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config, false)
 				} else if want.GetStatus() == pb.WantListEntry_LIMBO {
 					if (list.GetType() == pb.WantList_ALL_IN || list.GetType() == pb.WantList_RAPID) &&
 						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_STAGED ||
@@ -188,7 +200,7 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_HIGH_SCHOOL ||
 						r.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_IN_COLLECTION {
 						want.Status = pb.WantListEntry_COMPLETE
-						return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
+						return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config, false)
 					}
 				}
 				s.CtxLog(ctx, fmt.Sprintf("Huh: %v, %v", want, r))
@@ -198,5 +210,5 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 
 	s.CtxLog(ctx, fmt.Sprintf("Unable to locate %v in any want lists", r.GetRelease().GetId()))
 
-	return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config)
+	return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config, false)
 }

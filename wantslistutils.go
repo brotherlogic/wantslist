@@ -64,8 +64,8 @@ func recordMetrics(config *pb.Config) {
 	}
 }
 
-func (s *Server) prodProcess(ctx context.Context, config *pb.Config) error {
-	return s.processWantLists(ctx, config)
+func (s *Server) prodProcess(ctx context.Context, config *pb.Config, force bool) error {
+	return s.processWantLists(ctx, config, force)
 }
 
 func (s *Server) getRecord(ctx context.Context, id int32) (*pbrc.Record, error) {
@@ -145,7 +145,7 @@ func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
 	return nil
 }
 
-func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error {
+func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force bool) error {
 	defer s.CtxLog(ctx, "Complete processing")
 	for _, list := range config.Lists {
 		s.updateCosts(ctx, list)
@@ -186,7 +186,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config) error 
 			continue
 		}
 
-		isValidate := time.Since(time.Unix(list.GetLastValidate(), 0)) > time.Hour*24
+		isValidate := time.Since(time.Unix(list.GetLastValidate(), 0)) > time.Hour*24 || force
 
 		if isValidate {
 			switch list.GetType() {
