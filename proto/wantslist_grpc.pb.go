@@ -23,6 +23,7 @@ type WantServiceClient interface {
 	GetWantList(ctx context.Context, in *GetWantListRequest, opts ...grpc.CallOption) (*GetWantListResponse, error)
 	DeleteWantList(ctx context.Context, in *DeleteWantlistRequest, opts ...grpc.CallOption) (*DeleteWantlistResponse, error)
 	AmendWantListItem(ctx context.Context, in *AmendWantListItemRequest, opts ...grpc.CallOption) (*AmendWantListItemResponse, error)
+	ForceUpdate(ctx context.Context, in *ForceUpdateRequest, opts ...grpc.CallOption) (*ForceUpdateResponse, error)
 }
 
 type wantServiceClient struct {
@@ -87,6 +88,15 @@ func (c *wantServiceClient) AmendWantListItem(ctx context.Context, in *AmendWant
 	return out, nil
 }
 
+func (c *wantServiceClient) ForceUpdate(ctx context.Context, in *ForceUpdateRequest, opts ...grpc.CallOption) (*ForceUpdateResponse, error) {
+	out := new(ForceUpdateResponse)
+	err := c.cc.Invoke(ctx, "/wantslist.WantService/ForceUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WantServiceServer is the server API for WantService service.
 // All implementations should embed UnimplementedWantServiceServer
 // for forward compatibility
@@ -97,6 +107,7 @@ type WantServiceServer interface {
 	GetWantList(context.Context, *GetWantListRequest) (*GetWantListResponse, error)
 	DeleteWantList(context.Context, *DeleteWantlistRequest) (*DeleteWantlistResponse, error)
 	AmendWantListItem(context.Context, *AmendWantListItemRequest) (*AmendWantListItemResponse, error)
+	ForceUpdate(context.Context, *ForceUpdateRequest) (*ForceUpdateResponse, error)
 }
 
 // UnimplementedWantServiceServer should be embedded to have forward compatible implementations.
@@ -120,6 +131,9 @@ func (UnimplementedWantServiceServer) DeleteWantList(context.Context, *DeleteWan
 }
 func (UnimplementedWantServiceServer) AmendWantListItem(context.Context, *AmendWantListItemRequest) (*AmendWantListItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AmendWantListItem not implemented")
+}
+func (UnimplementedWantServiceServer) ForceUpdate(context.Context, *ForceUpdateRequest) (*ForceUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForceUpdate not implemented")
 }
 
 // UnsafeWantServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -241,6 +255,24 @@ func _WantService_AmendWantListItem_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WantService_ForceUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForceUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WantServiceServer).ForceUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/wantslist.WantService/ForceUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WantServiceServer).ForceUpdate(ctx, req.(*ForceUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _WantService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "wantslist.WantService",
 	HandlerType: (*WantServiceServer)(nil),
@@ -268,6 +300,10 @@ var _WantService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AmendWantListItem",
 			Handler:    _WantService_AmendWantListItem_Handler,
+		},
+		{
+			MethodName: "ForceUpdate",
+			Handler:    _WantService_ForceUpdate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

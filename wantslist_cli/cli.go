@@ -90,6 +90,11 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error getting wantlists: %v", err)
 		}
+	case "force":
+		_, err := client.ForceUpdate(ctx, &pb.ForceUpdateRequest{})
+		if err != nil {
+			log.Fatalf("Error getting wantlists: %v", err)
+		}
 	case "add":
 		bits := strings.Split(os.Args[2], ":")
 		name := os.Args[2]
