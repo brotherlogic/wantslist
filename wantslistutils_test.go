@@ -28,7 +28,7 @@ func (t *testWantBridge) want(ctx context.Context, id int32, retire int64, budge
 	return nil
 }
 
-func (t *testWantBridge) unwant(ctx context.Context, id int32, budget string) error {
+func (t *testWantBridge) unwant(ctx context.Context, id int32, budget, reason string) error {
 	if t.fail {
 		return fmt.Errorf("Built to fail")
 	}
