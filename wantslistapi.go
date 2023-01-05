@@ -47,7 +47,7 @@ func (s *Server) AmendWantListItem(ctx context.Context, req *pb.AmendWantListIte
 				// Unwant the old
 				if entry.GetWant() == req.GetOldId() {
 					if entry.GetStatus() == pb.WantListEntry_WANTED {
-						err := s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
+						err := s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget(), "Unwanting for Amend")
 						if err != nil {
 							return nil, err
 						}
