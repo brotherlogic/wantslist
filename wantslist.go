@@ -30,7 +30,7 @@ const (
 
 type wantBridge interface {
 	want(ctx context.Context, id int32, retire int64, budget string) error
-	unwant(ctx context.Context, id int32, budget string) error
+	unwant(ctx context.Context, id int32, budget string, reason string) error
 	get(ctx context.Context, id int32) (*pbrw.MasterWant, error)
 }
 
@@ -62,7 +62,7 @@ func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64, budge
 	return err
 }
 
-func (p *prodWantBridge) unwant(ctx context.Context, id int32, budget string) error {
+func (p *prodWantBridge) unwant(ctx context.Context, id int32, budget string, reason string) error {
 	conn, err := p.dial(ctx, "recordwants")
 	if err != nil {
 		return err
@@ -77,7 +77,8 @@ func (p *prodWantBridge) unwant(ctx context.Context, id int32, budget string) er
 	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id},
 		Budget:   budget,
 		Level:    pbrw.MasterWant_NEVER,
-		NewState: pbrw.MasterWant_UNWANTED})
+		NewState: pbrw.MasterWant_UNWANTED,
+		Reason:   reason})
 	return err
 }
 
