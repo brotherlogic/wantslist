@@ -100,7 +100,7 @@ func (s *Server) DeleteWantListItem(ctx context.Context, req *pb.DeleteWantListI
 				} else {
 					found = true
 					s.CtxLog(ctx, fmt.Sprintf("Found Want"))
-					s.wantBridge.unwant(ctx, elem.GetWant(), list.GetBudget())
+					s.wantBridge.unwant(ctx, elem.GetWant(), list.GetBudget(), "Unwating in prep for delete item")
 				}
 			}
 

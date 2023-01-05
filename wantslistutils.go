@@ -103,7 +103,7 @@ func (s *Server) updateWantOld(ctx context.Context, v *pb.WantListEntry, list *p
 			}
 		}
 	} else if v.Status == pb.WantListEntry_UNPROCESSED {
-		s.wantBridge.unwant(ctx, v.Want, list.GetBudget())
+		s.wantBridge.unwant(ctx, v.Want, list.GetBudget(), "Unwanting because this entry is unprocessed")
 	}
 	return nil
 }
@@ -198,7 +198,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force 
 					}
 
 					if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && w.GetStatus() != pb.WantListEntry_WANTED {
-						s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget())
+						s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget(), "Unwanting because of status in lust")
 					} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && w.GetStatus() == pb.WantListEntry_WANTED {
 						s.wantBridge.want(ctx, w.GetWant(), list.GetRetireTime(), list.GetBudget())
 					}
@@ -228,7 +228,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force 
 						return err
 					}
 					if want != nil && want.GetCurrentState() == pbrw.MasterWant_WANTED && entry.GetStatus() != pb.WantListEntry_WANTED {
-						s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget())
+						s.wantBridge.unwant(ctx, entry.GetWant(), list.GetBudget(), "Unwating because of status in list")
 					} else if (want == nil || want.GetCurrentState() != pbrw.MasterWant_WANTED) && entry.GetStatus() == pb.WantListEntry_WANTED {
 						s.wantBridge.want(ctx, entry.GetWant(), list.GetRetireTime(), list.GetBudget())
 					}
