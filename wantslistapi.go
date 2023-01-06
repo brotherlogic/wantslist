@@ -80,6 +80,7 @@ func (s *Server) ForceUpdate(ctx context.Context, req *pb.ForceUpdateRequest) (*
 	if rerr != nil {
 		return nil, rerr
 	}
+
 	return &pb.ForceUpdateResponse{}, s.save(ctx, config)
 }
 
