@@ -188,10 +188,12 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force 
 					if err != nil && status.Code(err) != codes.NotFound {
 						return err
 					}
-					if want.CurrentState == pbrw.MasterWant_WANTED {
-						err = s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget(), "Unwanting for limbo")
-						if err != nil {
-							return err
+					if status.Code(err) == codes.OK {
+						if want.CurrentState == pbrw.MasterWant_WANTED {
+							err = s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget(), "Unwanting for limbo")
+							if err != nil {
+								return err
+							}
 						}
 					}
 				}
