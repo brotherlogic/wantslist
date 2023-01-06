@@ -182,6 +182,19 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force 
 				if w.Status == pb.WantListEntry_WANTED {
 					w.Status = pb.WantListEntry_UNPROCESSED
 				}
+
+				if force {
+					want, err := s.wantBridge.get(ctx, w.GetWant())
+					if err != nil && status.Code(err) != codes.NotFound {
+						return err
+					}
+					if want.CurrentState == pbrw.MasterWant_WANTED {
+						err = s.wantBridge.unwant(ctx, w.GetWant(), list.GetBudget(), "Unwanting for limbo")
+						if err != nil {
+							return err
+						}
+					}
+				}
 			}
 			continue
 		}
