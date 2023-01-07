@@ -321,7 +321,7 @@ func TestAddClearsWant(t *testing.T) {
 	}
 
 	// This triggers the update and nulls out the time.
-	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 12})
 
 	mapper := make(map[int]pb.WantListEntry_Status)
 	wl, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
@@ -344,7 +344,7 @@ func TestAddClearsWant(t *testing.T) {
 	// This update should trigger the update logic
 	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 1234, InstanceId: 12}})
 	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 12345555, InstanceId: 1}})
-	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1234})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 12})
 
 	mapper = make(map[int]pb.WantListEntry_Status)
 	wl, err = s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
