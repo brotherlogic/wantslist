@@ -123,5 +123,4 @@ func TestDeleteWantsList(t *testing.T) {
 	if len(lists.GetLists()) != 1 {
 		t.Errorf("List was not removed")
 	}
-
 }

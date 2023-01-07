@@ -187,9 +187,11 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 	}
 	r := res.GetRecord()
 
+	found := false
 	for _, list := range config.GetLists() {
 		for _, want := range list.GetWants() {
 			if want.Want == r.GetRelease().GetId() {
+				found = true
 				if want.GetStatus() == pb.WantListEntry_WANTED {
 					s.CtxLog(ctx, fmt.Sprintf("Marking %v from %v as LIMBO (%v)", want.Want, list.GetName(), r))
 					want.Status = pb.WantListEntry_LIMBO
@@ -209,7 +211,9 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 		}
 	}
 
-	s.CtxLog(ctx, fmt.Sprintf("Unable to locate %v in any want lists", r.GetRelease().GetId()))
+	if !found {
+		s.CtxLog(ctx, fmt.Sprintf("Unable to locate %v in any want lists", req.GetInstanceId()))
+	}
 
 	return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config, false)
 }
