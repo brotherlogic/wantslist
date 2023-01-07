@@ -302,3 +302,65 @@ func TestBoughtRecordIsMarkedComplete(t *testing.T) {
 		t.Errorf("Entry was not marked wanted: %v", wl)
 	}
 }
+
+func TestAddClearsWant(t *testing.T) {
+	s := InitTestServer()
+	_, err := s.AddWantList(context.Background(), &pb.AddWantListRequest{
+		Add: &pb.WantList{
+			Name:   "TestListBudget",
+			Budget: "basic",
+			Type:   pb.WantList_ALL_IN,
+			Wants: []*pb.WantListEntry{
+				&pb.WantListEntry{Index: 1, Want: 1234, Status: pb.WantListEntry_WANTED},
+				&pb.WantListEntry{Index: 2, Want: 12345, Status: pb.WantListEntry_WANTED},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("Bad add: %v", err)
+	}
+
+	// This triggers the update and nulls out the time.
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1})
+
+	mapper := make(map[int]pb.WantListEntry_Status)
+	wl, err := s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
+	if err != nil {
+		t.Fatalf("Bad list get: %v", err)
+	}
+	for _, list := range wl.GetLists() {
+		for _, entry := range list.GetWants() {
+			mapper[int(entry.GetWant())] = entry.GetStatus()
+		}
+	}
+
+	if mapper[1234] != pb.WantListEntry_WANTED {
+		t.Errorf("Entry is still not wanted: %v", wl)
+	}
+	if mapper[12345] != pb.WantListEntry_WANTED {
+		t.Errorf("Entry is still not wanted: %v", wl)
+	}
+
+	// This update should trigger the update logic
+	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 1234, InstanceId: 12}})
+	s.rcclient.AddRecord(&pbrc.Record{Release: &pbgd.Release{Id: 12345555, InstanceId: 1}})
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 1234})
+
+	mapper = make(map[int]pb.WantListEntry_Status)
+	wl, err = s.GetWantList(context.Background(), &pb.GetWantListRequest{Name: "TestListBudget"})
+	if err != nil {
+		t.Fatalf("Bad list get: %v", err)
+	}
+	for _, list := range wl.GetLists() {
+		for _, entry := range list.GetWants() {
+			mapper[int(entry.GetWant())] = entry.GetStatus()
+		}
+	}
+
+	if mapper[1234] == pb.WantListEntry_WANTED {
+		t.Errorf("Entry is still  wanted: %v", wl)
+	}
+	if mapper[12345] != pb.WantListEntry_UNPROCESSED {
+		t.Errorf("Entry is still  wanted: %v", wl)
+	}
+}
