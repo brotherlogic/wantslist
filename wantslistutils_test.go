@@ -7,7 +7,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	pbgd "github.com/brotherlogic/godiscogs"
+	pbgd "github.com/brotherlogic/godiscogs/proto"
 	keystoreclient "github.com/brotherlogic/keystore/client"
 	rbc "github.com/brotherlogic/recordbudget/client"
 	rbpb "github.com/brotherlogic/recordbudget/proto"
