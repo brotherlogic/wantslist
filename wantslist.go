@@ -55,6 +55,7 @@ func (p *prodWantBridge) want(ctx context.Context, id int32, retire int64, budge
 		return err
 	}
 	_, err = client.Update(ctx, &pbrw.UpdateRequest{Want: &pbgd.Release{Id: id},
+		Reason:     "Adding want from wantslist",
 		Level:      pbrw.MasterWant_LIST,
 		RetireTime: retire,
 		NewState:   pbrw.MasterWant_WANTED,
