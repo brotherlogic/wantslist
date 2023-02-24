@@ -24,10 +24,6 @@ var (
 		Name: "wantslist_togo",
 		Help: "The number of outstanding wants",
 	}, []string{"list", "budget"})
-	costMetric = promauto.NewGaugeVec(prometheus.GaugeOpts{
-		Name: "wantslist_spent",
-		Help: "The number of outstanding wants",
-	}, []string{"list", "budget"})
 	remainingMetric = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "wantslist_remaining",
 		Help: "The number of outstanding wants",
@@ -64,7 +60,7 @@ func recordMetrics(config *pb.Config) {
 			activeMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(active))
 		}
 		togoMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(togo))
-		costMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(remaining))
+		remainingMetric.With(prometheus.Labels{"list": list.GetName(), "budget": list.GetBudget()}).Set(float64(remaining))
 	}
 }
 
