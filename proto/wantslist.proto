@@ -24,6 +24,7 @@ message WantListEntry {
   
   int32 estimated_cost = 4;
   int64 last_cost_time = 5;
+  int32 actual_cost = 6;
 }
 
 message WantList {

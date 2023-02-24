@@ -205,6 +205,8 @@ func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest
 						want.Status = pb.WantListEntry_COMPLETE
 						return &rcpb.ClientUpdateResponse{}, s.prodProcess(ctx, config, false)
 					}
+				} else if want.GetStatus() == pb.WantListEntry_COMPLETE {
+					want.ActualCost = r.GetMetadata().GetCost()
 				}
 				s.CtxLog(ctx, fmt.Sprintf("Huh: %v, %v", want, r))
 			}
