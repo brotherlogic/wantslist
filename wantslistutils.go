@@ -148,6 +148,7 @@ func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
 func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force bool) error {
 	defer s.CtxLog(ctx, "Complete processing")
 	for _, list := range config.Lists {
+		s.CtxLog(ctx, fmt.Sprintf("Processing %v", list.GetName()))
 		s.updateCosts(ctx, list)
 
 		//
@@ -238,6 +239,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force 
 			case pb.WantList_YEARLY:
 				days := 365 / len(list.GetWants())
 				for i, entry := range list.GetWants() {
+					s.CtxLog(ctx, fmt.Sprintf("Validating %+v", entry))
 					want, err := s.wantBridge.get(ctx, entry.GetWant())
 					if err != nil && status.Code(err) != codes.NotFound {
 						return err
