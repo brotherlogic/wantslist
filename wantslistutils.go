@@ -199,7 +199,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force 
 					}
 				}
 			}
-			continue
 		}
 
 		isValidate := time.Since(time.Unix(list.GetLastValidate(), 0)) > time.Hour*24 || force
