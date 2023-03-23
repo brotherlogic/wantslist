@@ -203,7 +203,7 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force 
 		}
 
 		isValidate := time.Since(time.Unix(list.GetLastValidate(), 0)) > time.Hour*24 || force
-		s.CtxLog(ctx, fmt.Sprintf("IsValidate %v since %v", isValidate, time.Unix(list.GetLastValidate(), 0)))
+		s.CtxLog(ctx, fmt.Sprintf("%v IsValidate %v since %v", list.GetName(), isValidate, time.Unix(list.GetLastValidate(), 0)))
 
 		if isValidate {
 			switch list.GetType() {
