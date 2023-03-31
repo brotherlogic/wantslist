@@ -10,7 +10,7 @@ on:
 
 jobs:
   checks:
-    name: basicassess
+    name: basic_assess
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
