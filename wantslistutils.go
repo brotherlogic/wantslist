@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"sort"
 	"time"
@@ -264,7 +263,6 @@ func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force 
 							entry.Status = pb.WantListEntry_WANTED
 						}
 					}
-					log.Printf("Now %v", entry)
 				}
 			}
 

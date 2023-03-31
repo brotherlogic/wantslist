@@ -169,7 +169,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error adding wantlist: %v", err)
 		}
-		log.Printf("ADDED: %v", resp)
+		fmt.Printf("ADDED: %v\n", resp)
 
 	}
 }
