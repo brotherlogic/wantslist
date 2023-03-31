@@ -84,7 +84,7 @@ func main() {
 			log.Fatalf("Bad num: %v", err)
 		}
 		val, err := client.DeleteWantListItem(ctx, &pb.DeleteWantListItemRequest{ListName: os.Args[2], Entry: &pb.WantListEntry{Want: int32(num)}})
-		log.Printf("%v -> %v", val, err)
+		fmt.Printf("%v -> %v\n", val, err)
 	case "sdelete":
 		_, err := client.DeleteWantList(ctx, &pb.DeleteWantlistRequest{Name: os.Args[2]})
 		if err != nil {
@@ -169,7 +169,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error adding wantlist: %v", err)
 		}
-		log.Printf("ADDED: %v", resp)
+		fmt.Printf("ADDED: %v\n", resp)
 
 	}
 }
