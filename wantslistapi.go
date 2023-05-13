@@ -171,9 +171,6 @@ func (s *Server) DeleteWantList(ctx context.Context, req *pb.DeleteWantlistReque
 
 // ClientUpdate on an updated record
 func (s *Server) ClientUpdate(ctx context.Context, req *rcpb.ClientUpdateRequest) (*rcpb.ClientUpdateResponse, error) {
-	if true {
-		return &rcpb.ClientUpdateResponse{}, nil
-	}
 	config, err := s.load(ctx)
 	if err != nil {
 		return nil, err
