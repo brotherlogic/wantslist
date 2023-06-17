@@ -736,6 +736,7 @@ github.com/brotherlogic/builder v0.0.0-20230512040203-b9f40074e5e0/go.mod h1:IAQ
 github.com/brotherlogic/builder v0.0.0-20230519044412-536545ae2290/go.mod h1:S1ss+YxBOLxggjBHzvPGmuZ4/cHHVaKH5mDydjieotM=
 github.com/brotherlogic/builder v0.0.0-20230526050432-8c70feb28dbf/go.mod h1:AParL/Zdo+k7FTlg3NzuWeKnNRIIiOQVy6s90sYJcGU=
 github.com/brotherlogic/builder v0.0.0-20230602052331-03fc8accbc3b/go.mod h1:7uqS8tBZLUAIL0ap3KmTbfPBnYnfZJHGMSn6ubpAjLQ=
+github.com/brotherlogic/builder v0.0.0-20230609054645-b98d61957b9d/go.mod h1:NxB83+JEwqHRjsT8C0S2PkAmEbyt6SZkky9r2pL/ZOI=
 github.com/brotherlogic/buildserver v0.0.0-20201019183109-5b9d0c13b530/go.mod h1:ZAwx2ZhsKIo+MaMpoN7T8d3dgHO8mjCFDPB4wMBIFlE=
 github.com/brotherlogic/buildserver v0.0.0-20210310012628-b12a393fe88a/go.mod h1:ZAwx2ZhsKIo+MaMpoN7T8d3dgHO8mjCFDPB4wMBIFlE=
 github.com/brotherlogic/buildserver v0.0.0-20210311141809-ebce0d8f1d09/go.mod h1:ZAwx2ZhsKIo+MaMpoN7T8d3dgHO8mjCFDPB4wMBIFlE=
@@ -836,8 +837,9 @@ github.com/brotherlogic/buildserver v0.0.0-20230517231128-d7d8fdf509a8/go.mod h1
 github.com/brotherlogic/buildserver v0.0.0-20230524232808-1c33c092bf4d/go.mod h1:mxEgc2qZ2PTEow1ijV61Zj1Hh8CQXyuActAmfvAAZY8=
 github.com/brotherlogic/buildserver v0.0.0-20230531234700-ce0c31e351e7/go.mod h1:pWOqBz9ASrje0grThu8GY2mY+eZg2gNFquISCjla5hQ=
 github.com/brotherlogic/buildserver v0.0.0-20230608005128-a851b3b57c45/go.mod h1:U6kG+umBv0eED6J/CMSi0PMSHuloz68OH3H4flaRacE=
-github.com/brotherlogic/buildserver v0.0.0-20230610183004-84db4ad05cd8 h1:UYIEsGSbW8J0/x5CMZzCgFdpQU99QFxM8V3dhMi0F5o=
 github.com/brotherlogic/buildserver v0.0.0-20230610183004-84db4ad05cd8/go.mod h1:101qf6MImQ7QMKRLKr9vgGqaHYF8ixeGjkW8eYpPhjI=
+github.com/brotherlogic/buildserver v0.0.0-20230617185210-f0ebf80f2d98 h1:uSGaQwLfF1yy+EMFyBVHGjwe5+HfWsKIEE+mIc8bFOU=
+github.com/brotherlogic/buildserver v0.0.0-20230617185210-f0ebf80f2d98/go.mod h1:t00sv2Ev0K6arHua1XEjdf9lIfnyA1gvOgWHivYsltc=
 github.com/brotherlogic/cardserver v0.0.0-20190719223243-651f4429cf27/go.mod h1:kP95c+Z9HoDZogqHo6tnAUdvW5YnTSV+MQOPxlLPszk=
 github.com/brotherlogic/cdprocessor v0.0.0-20210516180209-a867bfb00442/go.mod h1:H5OOZDfMzL4zrDhWbxAA/N2vWTTgIf7d7JFAs5GLwew=
 github.com/brotherlogic/cdprocessor v0.0.0-20210708203323-9cf5868e44c4/go.mod h1:XXKe3j0cAcpkMuEbjT3KXQg+achF/yz+hqpgNqLgCmo=
@@ -1242,6 +1244,7 @@ github.com/brotherlogic/filecopier v0.0.0-20230514025038-468da3060a9d/go.mod h1:
 github.com/brotherlogic/filecopier v0.0.0-20230521032951-4174867df9d4/go.mod h1:EG36cVLaRIImuTulgU2emm5Tb8/zjO41SetEu8tOpp0=
 github.com/brotherlogic/filecopier v0.0.0-20230528034220-d76206c74aad/go.mod h1:SZRMDuFBzcLcnRo8iTEWDVOhVz7YfFAbBPs6QqAmaI0=
 github.com/brotherlogic/filecopier v0.0.0-20230604035442-7687f0160225/go.mod h1:OM+vba/Z4qcK4zCcZEAXCg3TQ9ESOnsrLqS+nhl7GB8=
+github.com/brotherlogic/filecopier v0.0.0-20230611040622-1ed63521c5e7/go.mod h1:Sb32Qm2F9Yw7wO2h6NQLaqTL1nKLTzvbxE5m0RURGZA=
 github.com/brotherlogic/frametracker v0.0.0-20210108214332-61d86ee8f701/go.mod h1:21Eaa47nKHk1Ab77YyOhBdQ6cxKMvKf+9x96UL0wnhs=
 github.com/brotherlogic/frametracker v0.0.0-20220308202045-6632250e217e/go.mod h1:l52l94odEuoKaFmZxFUQ6A+p/AMD0KRY+J4E2V8mwyY=
 github.com/brotherlogic/frametracker v0.0.0-20220514055242-c87e03b44946/go.mod h1:9wXLjwHIBgssdHeWSzgcejaqu08Vmo1i2/Rk4fJ/Kxg=
@@ -2880,6 +2883,7 @@ github.com/brotherlogic/versiontracker v0.0.0-20230515034911-198ae93fd594/go.mod
 github.com/brotherlogic/versiontracker v0.0.0-20230522035347-eeb432995947/go.mod h1:1iOaearqpVbKk/b1m3Q4zWlELU8DyiKPDzgf902BxXg=
 github.com/brotherlogic/versiontracker v0.0.0-20230529040713-177f62dd55f5/go.mod h1:IlRBdLx+F4qk2vvtVMG4tamB/qCbb8t5m7uYcHpNOus=
 github.com/brotherlogic/versiontracker v0.0.0-20230605041314-cf8f32f4c543/go.mod h1:yf8O2Mdf+069o5RxeHQ4BElz9OTLNLuX4tzDexCKhV0=
+github.com/brotherlogic/versiontracker v0.0.0-20230612042122-830d2aabf408/go.mod h1:ZnEv7em0yy7tjTBJmZJARSkzJ7IvIrc6eEYk4UUTO4U=
 github.com/buger/jsonparser v1.1.1/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx27UK13J/0=
 github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
 github.com/bwesterb/go-ristretto v1.2.2/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
