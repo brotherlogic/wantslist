@@ -146,15 +146,20 @@ func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
 
 func (s *Server) processWantLists(ctx context.Context, config *pb.Config, force bool) error {
 	defer s.CtxLog(ctx, "Complete processing")
+	budgets := make(map[string]*rbpb.GetBudgetResponse)
 	for _, list := range config.Lists {
 		s.CtxLog(ctx, fmt.Sprintf("Processing %v", list.GetName()))
 		s.updateCosts(ctx, list)
 
-		//
-		budget, err := s.budgetClient.GetBudget(ctx, &rbpb.GetBudgetRequest{Budget: list.GetBudget()})
-		if err != nil {
-			return err
+		if _, ok := budgets[list.GetBudget()]; !ok {
+			budget, err := s.budgetClient.GetBudget(ctx, &rbpb.GetBudgetRequest{Budget: list.GetBudget()})
+			if err != nil {
+				return err
+			}
+			budgets[list.GetBudget()] = budget
 		}
+		budget := budgets[list.GetBudget()]
+
 		if budget.GetChosenBudget().GetRemaining() <= 0 {
 			s.CtxLog(ctx, fmt.Sprintf("Unwanting %v becuase budget %v has no money in it", list.GetName(), list.GetBudget()))
 			for _, w := range list.GetWants() {
