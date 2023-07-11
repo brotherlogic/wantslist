@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"sort"
 	"time"
 
@@ -136,7 +137,7 @@ func (s *Server) updateCosts(ctx context.Context, list *pb.WantList) error {
 				return err
 			}
 			entry.EstimatedCost = int32(price.GetPrice() * 100)
-			entry.LastCostTime = time.Now().Unix()
+			entry.LastCostTime = time.Now().Unix() + int64(24*60*60*rand.Float32())
 			return nil
 		}
 	}
