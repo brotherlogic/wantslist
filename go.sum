@@ -2452,8 +2452,9 @@ github.com/brotherlogic/recordbudget v0.0.0-20230625232100-629e6919815b/go.mod h
 github.com/brotherlogic/recordbudget v0.0.0-20230702235804-76b222832f8a/go.mod h1:ExOpm2SfV+I86f+SnxfK9iQ1ULku9veXavnZhCaFu9I=
 github.com/brotherlogic/recordbudget v0.0.0-20230710003555-a08ee08b8be0/go.mod h1:WqobtmFY2zZIHspYNYtoDTKLHdVuJTzjXkFkV55GEQc=
 github.com/brotherlogic/recordbudget v0.0.0-20230717225756-7efccd09b821/go.mod h1:TWSucgRzuHyN7fmwm/04KErpG8lxlhT73B/5feZ2TRY=
-github.com/brotherlogic/recordbudget v0.0.0-20230725002159-864dd3f06f5b h1:u++wnEOSpGjEPXldZyH7CBy+RySjIoTPpq9vM9qij8A=
 github.com/brotherlogic/recordbudget v0.0.0-20230725002159-864dd3f06f5b/go.mod h1:CTuO14Dd5WGcoeuToiCyV6mgO+DlBzH2ThVk3rpw8lo=
+github.com/brotherlogic/recordbudget v0.0.0-20230801011644-a6961047a6ff h1:ahhcPxoNK2bF4d6s4JSWwb2+5b6a41eXtU9au+kn8r0=
+github.com/brotherlogic/recordbudget v0.0.0-20230801011644-a6961047a6ff/go.mod h1:VAbaajwObWjL8gCre0Z559WkfwotwL+OiEP7vx7oThw=
 github.com/brotherlogic/recordcleaner v0.0.0-20210905010152-1246905f157e/go.mod h1:G0UQlga1wy8O6LLBdlqTGU2tsAkaRgn2UdMfxCAmjqY=
 github.com/brotherlogic/recordcleaner v0.0.0-20210921000556-646aa18a3ed4/go.mod h1:G0UQlga1wy8O6LLBdlqTGU2tsAkaRgn2UdMfxCAmjqY=
 github.com/brotherlogic/recordcleaner v0.0.0-20211017232533-de9cfb5da6ff/go.mod h1:pnZsOEnZ7FDwP+mjLELWCmveQas3Qnf/KjSZG8UcHBQ=
