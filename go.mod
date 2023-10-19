@@ -3,12 +3,11 @@ module github.com/brotherlogic/wantslist
 go 1.16
 
 require (
-	github.com/brotherlogic/discovery v0.0.0-20231019043330-e664fbb1036e // indirect
 	github.com/brotherlogic/godiscogs v0.0.0-20230922000443-fb73651e941c
 	github.com/brotherlogic/goserver v0.0.0-20230726200050-779ae6811580
 	github.com/brotherlogic/keystore v0.0.0-20231014003010-9fa4578d12ad
 	github.com/brotherlogic/recordbudget v0.0.0-20231011232108-82f9b6db1948
-	github.com/brotherlogic/recordcollection v0.0.0-20231019042242-48f308f6b42a
+	github.com/brotherlogic/recordcollection v0.0.0-20231019051056-a4b21e81ca3d
 	github.com/brotherlogic/recordwants v0.0.0-20230927071609-76a249945f12
 	github.com/prometheus/client_golang v1.17.0
 	golang.org/x/net v0.17.0
