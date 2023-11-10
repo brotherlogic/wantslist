@@ -3,7 +3,7 @@ module github.com/brotherlogic/wantslist
 go 1.16
 
 require (
-	github.com/brotherlogic/githubcard v0.0.0-20231108234837-83d97d88c137 // indirect
+	github.com/brotherlogic/gobuildslave v0.0.0-20231110054949-269f8cb8bc78 // indirect
 	github.com/brotherlogic/godiscogs v0.0.0-20230922000443-fb73651e941c
 	github.com/brotherlogic/goserver v0.0.0-20230726200050-779ae6811580
 	github.com/brotherlogic/keystore v0.0.0-20231105171731-fa878651229f
