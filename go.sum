@@ -28,10 +28,10 @@ github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 h1:hxu2T9JspE
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6/go.mod h1:babny4VO2GqFwjXqhJsP4a6la4XJeMT6f4BgLBPq4G8=
 github.com/brotherlogic/recordbudget v0.0.0-20241004101846-367d9c63281b h1:/MeqO8ChQAsOCf6LjmsXtgyycTznIbkNDAAo95rA7TA=
 github.com/brotherlogic/recordbudget v0.0.0-20241004101846-367d9c63281b/go.mod h1:GH5XIzcHynhOy3WnauZTlW9XFRRfWU6rfDTVDQ6xXM0=
-github.com/brotherlogic/recordcollection v0.0.0-20241004122010-f4b339ba6711 h1:OhLl0GORc6toCsvK/vPlKh3zmaXRMahg/xX5I8XRon0=
-github.com/brotherlogic/recordcollection v0.0.0-20241004122010-f4b339ba6711/go.mod h1:j3KkaPAxvJfkb6RQktxzCWuiwsrOIJiaeugvHyyMIjc=
-github.com/brotherlogic/recordwants v0.0.0-20241004152145-a1745314b2ce h1:MjKmOGaCt63Xkk0xDtYPkiMPn4ZFo+su4EAQIEZcJ9c=
-github.com/brotherlogic/recordwants v0.0.0-20241004152145-a1745314b2ce/go.mod h1:WTun4FAn7kbJiqkDsEu2Tkfx8+dMHIujKN7jtMWGF6o=
+github.com/brotherlogic/recordcollection v0.0.0-20241004152505-b8d8b7f13779 h1:PK9Y+W2MV7DCnT9CymzhQMwrxJW36xVGIdxfVj2S7KE=
+github.com/brotherlogic/recordcollection v0.0.0-20241004152505-b8d8b7f13779/go.mod h1:U65x2bP65h4IQ8o/5g02NOmLkR39kPGJgLRHMZ5SrDE=
+github.com/brotherlogic/recordwants v0.0.0-20241004162211-99437aefced9 h1:7G7PkLTF5JL9pjhehh5x5AhVaYgd2ax255nxy6XtLeo=
+github.com/brotherlogic/recordwants v0.0.0-20241004162211-99437aefced9/go.mod h1:GU9yGuWrTAJrf5qQGK+MmyHRceDlAcgytx5SRTsK8uI=
 github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 h1:YjFE4Sa+wwbl4yJwJaMQVeA4CMzLIDbbIuSMdsEp5/w=
 github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2/go.mod h1:ODrbMDhG+yOp2vie9vE4oaKsKhILDralZMr7PJ4HrJY=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
@@ -64,8 +64,8 @@ github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsT
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/struCoder/pidusage v0.2.1 h1:dFiEgUDkubeIj0XA1NpQ6+8LQmKrLi7NiIQl86E6BoY=
 github.com/struCoder/pidusage v0.2.1/go.mod h1:bewtP2KUA1TBUyza5+/PCpSQ6sc/H6jJbIKAzqW86BA=
-golang.org/x/net v0.29.0 h1:5ORfpBpCs4HzDYoodCDBbwHzdR5UrLBZ3sOnUJmFoHo=
-golang.org/x/net v0.29.0/go.mod h1:gLkgy8jTGERgjzMic6DS9+SP0ajcu6Xu3Orq/SpETg0=
+golang.org/x/net v0.30.0 h1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=
+golang.org/x/net v0.30.0/go.mod h1:2wGyMJ5iFasEhkwi13ChkO/t1ECNC4X4eBKkVFyYFlU=
 golang.org/x/sys v0.26.0 h1:KHjCJyddX0LoSTb3J+vWpupP9p0oznkqVk/IfjymZbo=
 golang.org/x/sys v0.26.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
 golang.org/x/text v0.19.0 h1:kTxAhCbGbxhK0IwgSKiMO5awPoDQ0RpfiVYBfK860YM=
