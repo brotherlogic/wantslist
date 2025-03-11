@@ -8,7 +8,7 @@ require (
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordbudget v0.0.0-20250311171002-f0a3ccc7ae46
 	github.com/brotherlogic/recordcollection v0.0.0-20250227174213-ce20ec909d87
-	github.com/brotherlogic/recordwants v0.0.0-20250311175843-5c6a17318f71
+	github.com/brotherlogic/recordwants v0.0.0-20250311190403-d4dee3aff5fa
 	github.com/prometheus/client_golang v1.21.1
 	golang.org/x/net v0.37.0
 	google.golang.org/grpc v1.71.0
@@ -20,12 +20,12 @@ require (
 	github.com/brotherlogic/buildserver v0.0.0-20250311180809-f9d00fac1ff6 // indirect
 	github.com/brotherlogic/datastore v0.0.0-20250113225754-a9cab19c721e // indirect
 	github.com/brotherlogic/discovery v0.0.0-20241109204028-02908558af09 // indirect
-	github.com/brotherlogic/dstore v0.0.0-20250311175242-40cfff600589 // indirect
+	github.com/brotherlogic/dstore v0.0.0-20250311193953-ed166946d6c2 // indirect
 	github.com/brotherlogic/githubcard v0.0.0-20250311180534-619e5ffbc043 // indirect
 	github.com/brotherlogic/githubridge v0.2849.0 // indirect
-	github.com/brotherlogic/gobuildslave v0.0.0-20250311175234-f14511ef4989 // indirect
-	github.com/brotherlogic/lock v0.0.0-20250311172853-e8ced96b2966 // indirect
-	github.com/brotherlogic/logging v0.0.0-20250311175425-5f977dc33ad1 // indirect
+	github.com/brotherlogic/gobuildslave v0.0.0-20250311194809-ee6c6c795fc0 // indirect
+	github.com/brotherlogic/lock v0.0.0-20250311190528-5ef06c2ccbc9 // indirect
+	github.com/brotherlogic/logging v0.0.0-20250311193821-6a021aa63216 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -39,5 +39,5 @@ require (
 	github.com/struCoder/pidusage v0.2.1 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250311173030-29e43e6258d7 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250311190419-81fb87f6b8bf // indirect
 )
