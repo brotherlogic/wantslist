@@ -6,9 +6,9 @@ require (
 	github.com/brotherlogic/godiscogs v0.0.0-20250131163651-1e34c776a68e
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
-	github.com/brotherlogic/recordbudget v0.0.0-20250312094107-a6bd7714ff27
+	github.com/brotherlogic/recordbudget v0.0.0-20250312103636-34acbb9f40ac
 	github.com/brotherlogic/recordcollection v0.0.0-20250227174213-ce20ec909d87
-	github.com/brotherlogic/recordwants v0.0.0-20250312093820-4437ffe85712
+	github.com/brotherlogic/recordwants v0.0.0-20250312104203-127934db8f3f
 	github.com/prometheus/client_golang v1.21.1
 	golang.org/x/net v0.37.0
 	google.golang.org/grpc v1.71.0
@@ -17,15 +17,15 @@ require (
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/brotherlogic/buildserver v0.0.0-20250312093837-4a90c5b53baf // indirect
+	github.com/brotherlogic/buildserver v0.0.0-20250312104212-00c75d4bd632 // indirect
 	github.com/brotherlogic/datastore v0.0.0-20250113225754-a9cab19c721e // indirect
 	github.com/brotherlogic/discovery v0.0.0-20241109204028-02908558af09 // indirect
-	github.com/brotherlogic/dstore v0.0.0-20250312101339-29ac6428d464 // indirect
-	github.com/brotherlogic/githubcard v0.0.0-20250312093531-f3cfc6aba41b // indirect
+	github.com/brotherlogic/dstore v0.0.0-20250312111012-82fb76272ed6 // indirect
+	github.com/brotherlogic/githubcard v0.0.0-20250312103942-411052be3030 // indirect
 	github.com/brotherlogic/githubridge v0.2849.0 // indirect
-	github.com/brotherlogic/gobuildslave v0.0.0-20250312103417-eb15d50ac8fd // indirect
+	github.com/brotherlogic/gobuildslave v0.0.0-20250312113539-d2f0d474faea // indirect
 	github.com/brotherlogic/lock v0.0.0-20250312103512-5be98d56297c // indirect
-	github.com/brotherlogic/logging v0.0.0-20250312103027-78dbee50ca4a // indirect
+	github.com/brotherlogic/logging v0.0.0-20250312113210-7dda74f2b396 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
