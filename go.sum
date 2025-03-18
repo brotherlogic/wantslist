@@ -22,12 +22,12 @@ github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126 h1:6e12Cl80V
 github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126/go.mod h1:2JK2kJhI5ler7e7M1WtIpIkiNGG2qy8V6X7VZLCsd5k=
 github.com/brotherlogic/lock v0.0.0-20250318212119-4d4e540fd1d5 h1:9HeVbjnkc5/Pk6K4SYZV3NAvKnLc6IUOfrtdpTKKhb4=
 github.com/brotherlogic/lock v0.0.0-20250318212119-4d4e540fd1d5/go.mod h1:LMzrLYqqytk8T4blyNt88pnEfuxsAmdAo70pPeaTjtU=
-github.com/brotherlogic/logging v0.0.0-20250318213719-84b3ac959640 h1:dJmWBd3uVr9nyEibAFb+QYy6L0bmhIBYLMRcM+JyvyE=
-github.com/brotherlogic/logging v0.0.0-20250318213719-84b3ac959640/go.mod h1:s4pK8mBRotD3UltiEtlV+L1lbu5wOUHRtLgEhoeQv+M=
+github.com/brotherlogic/logging v0.0.0-20250318221335-8ab2ca80267d h1:E7J9xLWfckXO7AhgAVTKb/IewxVqQA0XHEtFTmqARCc=
+github.com/brotherlogic/logging v0.0.0-20250318221335-8ab2ca80267d/go.mod h1:3fDs1FD18HwKSsowHdYWtJlwxv8WgDgqkTrEf0SqXNQ=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 h1:hxu2T9JspE76sL3XAx/CNtA9bOO6QCEJkyG9rBXFEVA=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6/go.mod h1:babny4VO2GqFwjXqhJsP4a6la4XJeMT6f4BgLBPq4G8=
-github.com/brotherlogic/recordbudget v0.0.0-20250318213822-776340b25df3 h1:VY+RLbznY/oOLv5jfayDQz0KKVq1P+6ZwAO5HU0FxU4=
-github.com/brotherlogic/recordbudget v0.0.0-20250318213822-776340b25df3/go.mod h1:YP8hQ5fhp/xnxuyHV/G3wfrqY06LdploZEOt5ArxRhM=
+github.com/brotherlogic/recordbudget v0.0.0-20250318221352-fb31448501c4 h1:pftXNv07CtIj2S6bhUG4eSBPXkxGr6K7Jbb3jD6d3pU=
+github.com/brotherlogic/recordbudget v0.0.0-20250318221352-fb31448501c4/go.mod h1:TMdW4fATn2OSwqgd0EdWMBGLFRrP9H8Q7BBs179Sw5s=
 github.com/brotherlogic/recordcollection v0.0.0-20250227174213-ce20ec909d87 h1:BX4IrQD+baBcQm7j8zTA+da+Rl3pcUy9FBKHk9IIwJs=
 github.com/brotherlogic/recordcollection v0.0.0-20250227174213-ce20ec909d87/go.mod h1:A+p6+E94GRc22lQAxAYnJk5Zp5BbtXhmhNCbVx7dfvo=
 github.com/brotherlogic/recordwants v0.0.0-20250318215932-9aef8e58c358 h1:snrerXuvnPJjdlWGDcFmmSanHva5BwpB9qVgT9QarRc=
