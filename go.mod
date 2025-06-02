@@ -8,7 +8,7 @@ require (
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordbudget v0.0.0-20250602205904-7b3c236c6e81
 	github.com/brotherlogic/recordcollection v0.0.0-20250602221715-ba89afe74334
-	github.com/brotherlogic/recordwants v0.0.0-20250602221403-83a93a62da9d
+	github.com/brotherlogic/recordwants v0.0.0-20250602222059-2ca1fc7ff4cd
 	github.com/prometheus/client_golang v1.22.0
 	golang.org/x/net v0.40.0
 	google.golang.org/grpc v1.72.2
