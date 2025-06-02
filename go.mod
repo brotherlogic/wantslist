@@ -7,7 +7,7 @@ require (
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordbudget v0.0.0-20250602205904-7b3c236c6e81
-	github.com/brotherlogic/recordcollection v0.0.0-20250602232049-fb175c8d2a50
+	github.com/brotherlogic/recordcollection v0.0.0-20250602233201-8836e790a68d
 	github.com/brotherlogic/recordwants v0.0.0-20250602231402-0cbe9c46ddbc
 	github.com/prometheus/client_golang v1.22.0
 	golang.org/x/net v0.40.0
@@ -21,7 +21,7 @@ require (
 	github.com/brotherlogic/datastore v0.0.0-20250602233011-81c7d9a4e23e // indirect
 	github.com/brotherlogic/discovery v0.0.0-20250510023052-d0207340fd9e // indirect
 	github.com/brotherlogic/dstore v0.0.0-20250602202242-3f2600c6f58a // indirect
-	github.com/brotherlogic/githubcard v0.0.0-20250602212600-810c7ca97dc5 // indirect
+	github.com/brotherlogic/githubcard v0.0.0-20250602233232-98854170693c // indirect
 	github.com/brotherlogic/githubridge v0.2859.0 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20250509192246-2e37750a2b43 // indirect
 	github.com/brotherlogic/lock v0.0.0-20250602205758-5d26d22b0d30 // indirect
